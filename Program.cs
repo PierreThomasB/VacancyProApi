@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ApplicationContext>(opt =>
 {
-    
+    opt.UseSqlServer("Server=Q200007;Database=Q200007;User=Q200007;Password=0007;");
 });
 
 
