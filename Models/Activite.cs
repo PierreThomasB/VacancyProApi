@@ -1,9 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace VacancyProAPI.Models;
 
 public class Activite
 {
-    public string Nom { get; set; } = null!;
-    public string Prenom { get; set; } = null!;
-    public DateTime JourDebut { get; set; }
-    public DateTime JourFin { get; set; }
+    [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)]public int IdActivite { get; set; }
+    [Required]public string Nom { get; set; } = null!;
+    [Required]public string Description { get; set; } = null!;
+    [Required]public DateTime JourDebut { get; set; }
+    [Required]public DateTime JourFin { get; set; }
+    
 }
