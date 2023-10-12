@@ -52,7 +52,7 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]
         public async Task<ActionResult<SuccessViewModel>> SignUp(UserSignUpDto request)
         {
-            if (!ModelState.IsValid) return BadRequest("Informations invalides");
+            if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
             var user = new User
             {
@@ -70,6 +70,36 @@ namespace VacancyProAPI.Controllers
             await _userManager.AddToRoleAsync(user, "Member");
 
             return Ok(new SuccessViewModel("Compte créé avec succès"));
+        }
+        
+        /// <summary>
+        /// Route (POST) permettant de connecter un utilisateur
+        /// </summary>
+        /// <param name="request">Les information nécessaires pour authentifier un utilisateur</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("SignIn")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Connecte un utilisateur")]
+        [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été connecté", typeof(SuccessViewModel))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations de connexion sont invalide", typeof(ErrorViewModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
+        public async Task<ActionResult<UserViewModel>> SingIn(UserSignInDto request)
+        {
+            if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
+
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null) return BadRequest(new ErrorViewModel("Email invalide"));
+
+            if (request.Password != String.Empty)
+            {
+                var result = await _userManager.CheckPasswordAsync(user, request.Password);
+                if (!result) return BadRequest(new ErrorViewModel("Mot de passe invalide"));
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }
     
     }
