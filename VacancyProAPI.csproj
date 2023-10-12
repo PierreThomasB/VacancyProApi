@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\WeatherForecastController.cs" />
     <Compile Remove="WeatherForecast.cs" />
+    <Compile Remove="Models\User.cs" />
   </ItemGroup>
 
 </Project>
