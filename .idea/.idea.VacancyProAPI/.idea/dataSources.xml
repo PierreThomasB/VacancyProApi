@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@192.168.128.18" uuid="a751ff15-3711-4360-8f5f-d7f9858a60eb">
+    <data-source source="LOCAL" name="Microsoft SQL Server (JetBrains)" uuid="1fa49b2a-2cbd-4e64-a6e7-73d83a69dbb4">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>
       <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
-      <jdbc-url>Server=192.168.128.18,1433;User=in20b1230;Password=7636;</jdbc-url>
+      <jdbc-url>Server=(localdb)\mssqllocaldb;Database=VacancyProApi;Trusted_Connection=True;</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

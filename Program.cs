@@ -54,15 +54,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("V1", new OpenApiInfo
-    {
-        Version = "V1",
-        Title = "VacancyProAPI",
-        Description = "A Web API for managing vacation period"
-    });
-});
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
