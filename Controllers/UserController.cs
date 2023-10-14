@@ -46,10 +46,10 @@ namespace VacancyProAPI.Controllers
         [AllowAnonymous]
         [HttpPost("SignUp")]
         [Produces("application/json")]
-        [SwaggerOperation(Summary = "Crée un nouvel utilisateur")]
+        /*[SwaggerOperation(Summary = "Crée un nouvel utilisateur")]
         [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été créé", typeof(SuccessViewModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations de l'utilisateur sont invalide ou l'utilisateur existe déjà", typeof(ErrorViewModel))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]*/
         public async Task<ActionResult<SuccessViewModel>> SignUp(UserSignUpDto request)
         {
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
