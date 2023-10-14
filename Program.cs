@@ -25,13 +25,13 @@ var connectionString = configuration.GetConnectionString("default");
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpContextAccessor();
-// builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionString));
 
 // TODO : Remplacer UseSqlServer par la connctionString
-builder.Services.AddDbContext<DatabaseContext>(opt =>
+/*builder.Services.AddDbContext<DatabaseContext>(opt =>
 {
     opt.UseSqlServer("Server=Q200007;Database=Q200007;User=Q200007;Password=0007;");
-});
+});*/
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
