@@ -13,8 +13,8 @@ namespace VacancyProAPI.Models.DbModels
         public Place Place { get; set; }
         
         public User Creator { get; set; }
-        public IList<User> ListUser { get; set; }
-        public IList<Activity> ListActivity { get; set; }
+        public IEnumerable<User> ListUser { get; set; }
+        public IEnumerable<Activity> ListActivity { get; set; }
         
         public Period() {}
         
@@ -27,7 +27,7 @@ namespace VacancyProAPI.Models.DbModels
             Creator = creator;
             Place = place;
 
-            ListUser = new List<User>();
+            ListUser = new HashSet<User>();
             ListActivity = new List<Activity>();
         }
     }
