@@ -1,28 +1,31 @@
-﻿namespace VacancyProAPI.Models.DbModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VacancyProAPI.Models.DbModels
 {
     public class Period
     {
+        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
-        public virtual PeriodPlace PeriodPlace { get; set; }
+        public Place Place { get; set; }
         
-        public virtual User Creator { get; set; }
-        public virtual IList<User> ListUser { get; set; }
-        public virtual IList<Activity> ListActivity { get; set; }
+        public User Creator { get; set; }
+        public IList<User> ListUser { get; set; }
+        public IList<Activity> ListActivity { get; set; }
         
         public Period() {}
         
-        public Period(string name, string description, DateTime beginDate, DateTime endDate, User creator, PeriodPlace periodPlace)
+        public Period(string name, string description, DateTime beginDate, DateTime endDate, User creator, Place place)
         {
             Name = name;
             Description = description;
             BeginDate = beginDate;
             EndDate = endDate;
             Creator = creator;
-            PeriodPlace = periodPlace;
+            Place = place;
 
             ListUser = new List<User>();
             ListActivity = new List<Activity>();

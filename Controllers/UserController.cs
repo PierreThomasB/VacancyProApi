@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
@@ -15,7 +16,7 @@ namespace VacancyProAPI.Controllers
     /// Controller qui permet de gérer les utilisateurs
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -38,6 +39,30 @@ namespace VacancyProAPI.Controllers
             _config = config;
             _userService = userService;
         }
+
+        /// <summary>
+        /// Route (GET) qui permet de récupérer les utilisateurs de l'application
+        /// </summary>
+        /// <returns>Une liste d'utilisateur transformées en ViewModel</returns>
+        [HttpGet("ListUser")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère la liste des utilisateurs de l'application")]
+        [SwaggerResponse(StatusCodes.Status200OK, "La liste des utilisateurs a bien été récupérée", typeof(List<UserViewModel>))]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+        public async Task<ActionResult<List<UserViewModel>>> GetUsers()
+        {
+            var users = await _context.Users.Include(u => u.Periods).ToListAsync();
+
+            var userViewModels = new List<UserViewModel>();
+
+            foreach (var user in users)
+            {
+                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                userViewModels.Add(new UserViewModel(user,isAdmin,"nothing to see here"));
+            }
+
+            return Ok(userViewModels);
+        }
         /// <summary>
         /// Route (POST) qui permet de créer un utilisateur
         /// </summary>
@@ -46,10 +71,10 @@ namespace VacancyProAPI.Controllers
         [AllowAnonymous]
         [HttpPost("SignUp")]
         [Produces("application/json")]
-        /*[SwaggerOperation(Summary = "Crée un nouvel utilisateur")]
+        [SwaggerOperation(Summary = "Crée un nouvel utilisateur")]
         [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été créé", typeof(SuccessViewModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations de l'utilisateur sont invalide ou l'utilisateur existe déjà", typeof(ErrorViewModel))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]*/
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]
         public async Task<ActionResult<SuccessViewModel>> SignUp(UserSignUpDto request)
         {
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
@@ -57,7 +82,8 @@ namespace VacancyProAPI.Controllers
             var user = new User
             {
                 UserName = $"{request.FirstName} {request.LastName}",
-                Email = request.Email
+                Email = request.Email,
+                Periods = new List<Period>()
             };
             
             var result = request.Password != string.Empty 
@@ -66,8 +92,8 @@ namespace VacancyProAPI.Controllers
 
             if (!result.Succeeded)
                 return BadRequest(new ErrorViewModel(string.Join(" | ", result.Errors.Select(e => e.Code))));
-
             await _userManager.AddToRoleAsync(user, "Member");
+            
 
             return Ok(new SuccessViewModel("Compte créé avec succès"));
         }
@@ -98,9 +124,34 @@ namespace VacancyProAPI.Controllers
             }
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            user.Periods = _context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Periods).ThenInclude(p => p.Place)
+                .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
+                .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                .FirstOrDefault()!.Periods;
 
+            user.Periods = _context.Periods.Where(p => p.Creator.Id == user.Id)
+                .Include(p => p.ListActivity).ThenInclude(a => a.Place)
+                .Include(p => p.Place)
+                //.Include(p => p.PeriodPlace.Id == _context.PeriodPlaces.First(place => place.Id == p.PeriodPlace.Id).Id)
+                .Include(p => p.ListUser)
+                .ToList();
+            
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }
+        
+        /// <summary>
+        /// Route (PUT) qui permet de modifier le nom d'utilisateur de l'utilisateur connecté
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /*public async Task<ActionResult<SuccessViewModel>> EditUser(string email, [FromBody] UsernameDto request)
+        {
+            
+            return Ok(new SuccessViewModel("Nom d'utilisateur modifié avec succès"));
+        }*/
     
     }
 }

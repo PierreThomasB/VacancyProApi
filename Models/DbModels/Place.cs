@@ -1,7 +1,10 @@
-﻿namespace VacancyProAPI.Models.DbModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VacancyProAPI.Models.DbModels
 {
-    public class PeriodPlace : IPlace
+    public class Place
     {
+        [Key]
         public int Id { get; set; }
         public string Street { get; set; }
         public int PostalCode { get; set; }
@@ -9,9 +12,9 @@
         public string Locality { get; set; }
         public string Country { get; set; }
         
-        public PeriodPlace() {}
+        public Place() {}
 
-        public PeriodPlace(string street, int postalCode, string number, string locality, string country)
+        public Place(string street, int postalCode, string number, string locality, string country)
         {
             Street = street;
             PostalCode = postalCode;

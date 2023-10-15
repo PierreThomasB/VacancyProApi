@@ -5,8 +5,11 @@ using VacancyProAPI.Models.DbModels;
 
 namespace VacancyProAPI.Controllers
 {
+    /// <summary>
+    /// Controller qui permet de gérer les périodes de vacances
+    /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PeriodController : ControllerBase
     {
     

@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Models\ConfigurationFiles\" />
   </ItemGroup>
 
@@ -36,6 +35,11 @@
     <Compile Remove="Models\User.cs" />
     <Compile Remove="Models\Activite.cs" />
     <Compile Remove="Models\Vacances.cs" />
+    <Compile Remove="Migrations\20231014175659_InitialCreate.Designer.cs" />
+    <Compile Remove="Models\DbModels\ActivityPlace.cs" />
+    <Compile Remove="Models\DbModels\IPlace.cs" />
+    <Compile Remove="Migrations\20231015140353_InitialCreate.cs" />
+    <Compile Remove="Migrations\20231015140353_InitialCreate.Designer.cs" />
   </ItemGroup>
 
 </Project>
