@@ -1,5 +1,9 @@
+using FirebaseAdmin;
+using FirebaseAdmin.Auth;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
 using VacancyProAPI.Models;
+using VacancyProAPI.Services.ChatService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,8 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
+
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<ApplicationContext>(opt =>
 {
@@ -20,6 +26,11 @@ builder.Services.AddDbContext<ApplicationContext>(opt =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("./firebase.json"),
+});
 
 var app = builder.Build();
 
@@ -35,5 +46,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chatsocket");
 
 app.Run();
