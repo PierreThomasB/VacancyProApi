@@ -34,22 +34,11 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("JourDebut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("JourFin")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("VacancesIdVacances")
-                        .HasColumnType("int");
-
                     b.HasKey("IdActivite");
-
-                    b.HasIndex("VacancesIdVacances");
 
                     b.ToTable("Activites");
                 });
@@ -79,18 +68,6 @@ namespace VacancyProAPI.Migrations
                     b.HasKey("IdVacances");
 
                     b.ToTable("Vacances");
-                });
-
-            modelBuilder.Entity("VacancyProAPI.Models.Activite", b =>
-                {
-                    b.HasOne("VacancyProAPI.Models.Vacances", null)
-                        .WithMany("Activites")
-                        .HasForeignKey("VacancesIdVacances");
-                });
-
-            modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
-                {
-                    b.Navigation("Activites");
                 });
 #pragma warning restore 612, 618
         }

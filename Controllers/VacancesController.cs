@@ -17,29 +17,49 @@ public class VacancesController : ControllerBase
     }
 
 
-    [HttpGet]
-    [Route("api/Vacances/All")]
+    [HttpGet("AllVacances")]
+  
     public async Task<ActionResult<IEnumerable<Vacances>>> GetAllVacances()
     {
         return  Ok(await _context.Vacances.ToListAsync());
     }
 
-
-    [HttpPost]
-    public async  Task<IActionResult> Post(Vacances vacances)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Vacances>> GetVacances(int id)
     {
-         var  val = await this._context.AddAsync(vacances);
-         if (val.State == EntityState.Added)
-         {
-             return Ok("Vacances ajoutée avec succès");
-         }
+        var result = await this._context.Vacances.FindAsync(id);
+        if (result == null)
+        {
+            return NotFound("L'id n'a pas été trouvé");
+        }
 
-         return BadRequest("Les valeurs ne sont pas bonnes ");
+        return Ok(result);
 
     }
 
 
-    [HttpDelete]
+    [HttpPost("New")]
+    public async  Task<IActionResult> Post([FromBody]Vacances vacances)
+    {
+        
+        Vacances vacancesObj = new Vacances()
+        {
+            Nom = vacances.Nom,
+            Description = vacances.Description,
+            DateDebut = vacances.DateDebut,
+            DateFin = vacances.DateFin
+        };
+
+         _context.Vacances.Add(vacancesObj);
+         await _context.SaveChangesAsync();
+
+
+        return CreatedAtAction("GetVacances", new { id = vacancesObj.IdVacances }, vacancesObj);
+
+    }
+
+
+    [HttpDelete("Delete")]
 
     public async Task<IActionResult> DeleteVacances(string id)
     {

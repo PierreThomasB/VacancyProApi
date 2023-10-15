@@ -10,6 +10,5 @@ public class Vacances
     [Required]public string Description { get; set; } = null!;
     [Required] public DateTime DateDebut { get; set; }
     [Required]public DateTime DateFin { get; set; }
-    public virtual Activite[] Activites { get; set; } = null!;
 
 }

@@ -8,7 +8,6 @@ public class Activite
     [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)]public int IdActivite { get; set; }
     [Required]public string Nom { get; set; } = null!;
     [Required]public string Description { get; set; } = null!;
-    [Required]public DateTime JourDebut { get; set; }
-    [Required]public DateTime JourFin { get; set; }
+   
     
 }

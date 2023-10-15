@@ -18,8 +18,7 @@ public class ActiviteController : ControllerBase
     
     
     
-    [HttpGet]
-    [Route("api/[controller]/All")]
+    [HttpGet("AllActivite")]
     public async Task<ActionResult<IEnumerable<Vacances>>> GetAllActivite()
     {
         var val = await _context.Activites.ToListAsync();
