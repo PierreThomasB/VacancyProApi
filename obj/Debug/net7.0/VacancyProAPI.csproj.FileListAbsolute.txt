@@ -84,3 +84,7 @@
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.Auth.dll
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.Core.dll
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Newtonsoft.Json.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Firebase.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/LiteDB.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/System.Reactive.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/System.Runtime.InteropServices.WindowsRuntime.dll
