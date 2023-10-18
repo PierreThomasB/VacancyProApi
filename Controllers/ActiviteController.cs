@@ -24,4 +24,9 @@ public class ActiviteController : ControllerBase
         var val = await _context.Activites.ToListAsync();
         return  Ok(val);
     }
+    
+    
+    
+    
+    
 }
