@@ -75,3 +75,12 @@
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Microsoft.Extensions.DependencyModel.dll
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Mono.TextTemplating.dll
 /Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/System.CodeDom.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/firebase.json
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/FirebaseAdmin.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Api.Gax.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Api.Gax.Rest.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.Auth.PlatformServices.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.Auth.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Google.Apis.Core.dll
+/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/bin/Debug/net7.0/Newtonsoft.Json.dll
