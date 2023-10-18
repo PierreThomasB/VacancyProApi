@@ -5,7 +5,7 @@
 namespace VacancyProAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class linkToVacances : Migration
+    public partial class lieuTovacances2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

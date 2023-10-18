@@ -10,9 +10,8 @@ public class Vacances
     [Required]public string Description { get; set; } = null!;
     [Required] public DateTime DateDebut { get; set; }
     [Required]public DateTime DateFin { get; set; }
-
-    public virtual Activite[] Activite { get; set; } = null!;
-    public virtual Lieux Lieux { get; set; } = null!;
+    public ICollection<Activite> Activites { get; set; } = null!;
+    [Required]public virtual Lieux Lieux { get; set; } = null!;
     
 
 }

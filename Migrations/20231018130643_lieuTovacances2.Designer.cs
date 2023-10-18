@@ -12,8 +12,8 @@ using VacancyProAPI.Models;
 namespace VacancyProAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20231012095601_linkToVacances")]
-    partial class linkToVacances
+    [Migration("20231018130643_lieuTovacances2")]
+    partial class lieuTovacances2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,11 +37,8 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("JourDebut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("JourFin")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("LieuxIdLieu")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nom")
                         .IsRequired()
@@ -52,9 +49,32 @@ namespace VacancyProAPI.Migrations
 
                     b.HasKey("IdActivite");
 
+                    b.HasIndex("LieuxIdLieu");
+
                     b.HasIndex("VacancesIdVacances");
 
                     b.ToTable("Activites");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Lieux", b =>
+                {
+                    b.Property<int>("IdLieu")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdLieu"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lieu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdLieu");
+
+                    b.ToTable("Lieux");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
@@ -75,20 +95,44 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LieuxIdLieu")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdVacances");
 
+                    b.HasIndex("LieuxIdLieu");
+
                     b.ToTable("Vacances");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.Activite", b =>
                 {
+                    b.HasOne("VacancyProAPI.Models.Lieux", "Lieux")
+                        .WithMany()
+                        .HasForeignKey("LieuxIdLieu")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VacancyProAPI.Models.Vacances", null)
                         .WithMany("Activites")
                         .HasForeignKey("VacancesIdVacances");
+
+                    b.Navigation("Lieux");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
+                {
+                    b.HasOne("VacancyProAPI.Models.Lieux", "Lieux")
+                        .WithMany()
+                        .HasForeignKey("LieuxIdLieu")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lieux");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>

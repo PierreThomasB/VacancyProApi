@@ -38,7 +38,7 @@ public class VacancesController : ControllerBase
     }
 
 
-    [HttpPost("New")]
+    [HttpPost("NewVacances")]
     public async  Task<IActionResult> Post([FromBody]Vacances vacances)
     {
         

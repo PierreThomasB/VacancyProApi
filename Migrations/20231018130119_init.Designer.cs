@@ -12,8 +12,8 @@ using VacancyProAPI.Models;
 namespace VacancyProAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20231012095448_Activite")]
-    partial class Activite
+    [Migration("20231018130119_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,12 +37,6 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("JourDebut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("JourFin")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -50,6 +44,27 @@ namespace VacancyProAPI.Migrations
                     b.HasKey("IdActivite");
 
                     b.ToTable("Activites");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Lieux", b =>
+                {
+                    b.Property<int>("IdLieu")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdLieu"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lieu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdLieu");
+
+                    b.ToTable("Lieux");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
