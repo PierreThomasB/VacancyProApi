@@ -3,29 +3,88 @@ using Microsoft.EntityFrameworkCore;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 
-namespace VacancyProAPI.Controllers
+namespace VacancyProAPI.Controllers;
+
+/// <summary>
+/// Controller qui permet de gérer les périodes de vacances
+/// </summary>
+[ApiController]
+[Route("api/[controller]")]
+public class PeriodController : ControllerBase
 {
-    /// <summary>
-    /// Controller qui permet de gérer les périodes de vacances
-    /// </summary>
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PeriodController : ControllerBase
-    {
     
-        private readonly DatabaseContext _context;
-        public PeriodController(DatabaseContext context)
-        {
-            this._context = context;
-        }
+    private readonly DatabaseContext _context;
+    public PeriodController(DatabaseContext context)
+    {
+        _context = context;
+    }
 
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Period>>> GetPeriods()
+    [HttpGet("AllPeriods")]
+  
+    public async Task<ActionResult<IEnumerable<Period>>> GetAllVacances()
+    {
+        return  Ok(await _context.Periods.ToListAsync());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Vacances>> GetVacances(int id)
+    {
+        var result = await this._context.Periods.FindAsync(id);
+        if (result == null)
         {
-            return  await _context.Periods.ToListAsync();
+            return NotFound("L'id n'a pas été trouvé");
         }
+
+        return Ok(result);
+
+    }
+
+
+    [HttpPost("NewVacances")]
+    public async  Task<IActionResult> Post([FromBody]Period p)
+    {
+        
+        Period vacancesObj = new Period()
+        {
+            Name = p.Name,
+            Description = p.Description,
+            BeginDate = p.BeginDate,
+            EndDate = p.EndDate,
+            Creator = p.Creator,
+            Place = p.Place,
+
+            ListUser = new HashSet<User>(),
+            ListActivity = new List<Activity>(),
+        };
+
+         _context.Periods.Add(vacancesObj);
+         await _context.SaveChangesAsync();
+
+
+        return CreatedAtAction("GetVacances", new { id = vacancesObj.Id }, vacancesObj);
+
+    }
+
+
+    [HttpDelete("Delete")]
+
+    public async Task<IActionResult> DeleteVacances(string id)
+    {
+        
+        
+        if (await this._context.Periods.FindAsync(id) == null)
+        {
+            return BadRequest("L'id des vacances n'a pas été trouvé");
+        }
+        else
+        {
+            Period vacances = (await this._context.Periods.FindAsync(id))!;
+            _context.Periods.Remove(vacances);
+            await _context.SaveChangesAsync();
+            return Ok("Les vacances ont bien été supprimé ");
+        }
+
+       
     }
 }
-
-
