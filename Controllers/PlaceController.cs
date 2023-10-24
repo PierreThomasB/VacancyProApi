@@ -8,12 +8,12 @@ using VacancyProAPI.Models;
 namespace VacancyProAPI.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class LieuController : ControllerBase
+public class PlaceController : ControllerBase
 {
     
-    private readonly ApplicationContext _context;
+    private readonly DatabaseContext _context;
 
-    public LieuController(ApplicationContext context) 
+    public PlaceController(DatabaseContext context) 
     {
         _context = context;
     }
@@ -22,7 +22,7 @@ public class LieuController : ControllerBase
     [HttpGet("AllLieux")]
     public async Task<ActionResult<IEnumerable<Lieux>>> GetAllLieux()
     {
-        return Ok(await _context.Lieux.ToListAsync());
+        return Ok(await _context.Places.ToListAsync());
     }
     
     

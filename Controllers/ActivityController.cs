@@ -7,11 +7,11 @@ namespace VacancyProAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ActiviteController : ControllerBase
+public class ActivityController : ControllerBase
 {
     private readonly ApplicationContext _context;
 
-    public ActiviteController(ApplicationContext context)
+    public ActivityController(ApplicationContext context)
     {
         _context = context;
     }

@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj": {}
+    "C:\\b3\\VacancyPro\\vacancyproapi\\VacancyProAPI.csproj": {}
   },
   "projects": {
-    "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj": {
+    "C:\\b3\\VacancyPro\\vacancyproapi\\VacancyProAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj",
+        "projectUniqueName": "C:\\b3\\VacancyPro\\vacancyproapi\\VacancyProAPI.csproj",
         "projectName": "VacancyProAPI",
-        "projectPath": "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj",
+        "projectPath": "C:\\b3\\VacancyPro\\vacancyproapi\\VacancyProAPI.csproj",
         "packagesPath": "C:\\Users\\ludov\\.nuget\\packages\\",
-        "outputPath": "F:\\VacancyPro\\VacancyProApi\\obj\\",
+        "outputPath": "C:\\b3\\VacancyPro\\vacancyproapi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ludov\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\ludov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,6 +40,14 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            },
+            "FirebaseDatabase.net": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[7.0.12, )"
@@ -52,13 +62,11 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.12, )"
+              "version": "[7.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.12, )"
+              "version": "[7.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
@@ -104,7 +112,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
         }
       }
     }
