@@ -1,26 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/VacancyProAPI.csproj": {}
+    "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj": {}
   },
   "projects": {
-    "/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/VacancyProAPI.csproj": {
+    "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/VacancyProAPI.csproj",
+        "projectUniqueName": "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj",
         "projectName": "VacancyProAPI",
-        "projectPath": "/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/VacancyProAPI.csproj",
-        "packagesPath": "/Users/pierrethomas/.nuget/packages/",
-        "outputPath": "/Users/pierrethomas/Documents/Documents - MacBook Air de Pierre/Helmo/bloc 3/Projet Commum/Back-End/vacancyproapi/obj/",
+        "projectPath": "F:\\VacancyPro\\VacancyProApi\\VacancyProAPI.csproj",
+        "packagesPath": "C:\\Users\\ludov\\.nuget\\packages\\",
+        "outputPath": "F:\\VacancyPro\\VacancyProApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/pierrethomas/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ludov\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.306/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,13 +38,13 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "FirebaseAdmin": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[2.4.0, )"
+              "version": "[7.0.12, )"
             },
-            "FirebaseDatabase.net": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[4.2.0, )"
+              "version": "[7.0.12, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
@@ -53,13 +52,13 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[7.0.12, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[7.0.12, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
@@ -69,7 +68,19 @@
               "target": "Package",
               "version": "[7.0.0, )"
             },
-            "Swashbuckle.AspNetCore": {
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Swashbuckle.AspNetCore.Filters": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerUI": {
               "target": "Package",
               "version": "[6.5.0, )"
             }
@@ -93,7 +104,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.306/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
