@@ -12,7 +12,7 @@ using VacancyProAPI.Models;
 namespace VacancyProAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20231018130119_init")]
+    [Migration("20231024091621_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -37,13 +37,51 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LieuxIdLieu")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("VacancesIdVacances")
+                        .HasColumnType("int");
+
                     b.HasKey("IdActivite");
 
+                    b.HasIndex("LieuxIdLieu");
+
+                    b.HasIndex("VacancesIdVacances");
+
                     b.ToTable("Activites");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.AnonymUser", b =>
+                {
+                    b.Property<int>("IdAnonym")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAnonym"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsResolve")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Sujet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdAnonym");
+
+                    b.ToTable("AnonymUsers");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.Lieux", b =>
@@ -85,13 +123,49 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LieuxIdLieu")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdVacances");
 
+                    b.HasIndex("LieuxIdLieu");
+
                     b.ToTable("Vacances");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Activite", b =>
+                {
+                    b.HasOne("VacancyProAPI.Models.Lieux", "Lieux")
+                        .WithMany()
+                        .HasForeignKey("LieuxIdLieu")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VacancyProAPI.Models.Vacances", null)
+                        .WithMany("Activites")
+                        .HasForeignKey("VacancesIdVacances");
+
+                    b.Navigation("Lieux");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
+                {
+                    b.HasOne("VacancyProAPI.Models.Lieux", "Lieux")
+                        .WithMany()
+                        .HasForeignKey("LieuxIdLieu")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lieux");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.Vacances", b =>
+                {
+                    b.Navigation("Activites");
                 });
 #pragma warning restore 612, 618
         }

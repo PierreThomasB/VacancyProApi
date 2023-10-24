@@ -53,6 +53,34 @@ namespace VacancyProAPI.Migrations
                     b.ToTable("Activites");
                 });
 
+            modelBuilder.Entity("VacancyProAPI.Models.AnonymUser", b =>
+                {
+                    b.Property<int>("IdAnonym")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAnonym"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsResolve")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Sujet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdAnonym");
+
+                    b.ToTable("AnonymUsers");
+                });
+
             modelBuilder.Entity("VacancyProAPI.Models.Lieux", b =>
                 {
                     b.Property<int>("IdLieu")
