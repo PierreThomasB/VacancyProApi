@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VacancyProAPI.Models;
-
+using VacancyProAPI.Models.DbModels;
 
 
 namespace VacancyProAPI.Controllers;
@@ -20,7 +20,7 @@ public class PlaceController : ControllerBase
     
     
     [HttpGet("AllLieux")]
-    public async Task<ActionResult<IEnumerable<Lieux>>> GetAllLieux()
+    public async Task<ActionResult<IEnumerable<Place>>> GetAllLieux()
     {
         return Ok(await _context.Places.ToListAsync());
     }

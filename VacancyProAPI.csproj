@@ -28,9 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Models\ConfigurationFiles\" />
     <Folder Include="Models\DbModels\" />
-    <Folder Include="Models\DTOs\" />
     <Folder Include="Models\ViewModels\" />
     <Folder Include="Services\FireBase\" />
   </ItemGroup>
