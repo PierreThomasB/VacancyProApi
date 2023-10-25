@@ -28,7 +28,7 @@ public class PeriodController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Vacances>> GetVacances(int id)
+    public async Task<ActionResult<Period>> GetVacances(int id)
     {
         var result = await this._context.Periods.FindAsync(id);
         if (result == null)
