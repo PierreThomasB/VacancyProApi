@@ -1,3 +1,6 @@
+
+
+using Google;
 using Microsoft.AspNetCore.Mvc;
 using VacancyProAPI.Models;
 
@@ -9,15 +12,15 @@ namespace VacancyProAPI.Controllers;
 public class AnonymUserController : ControllerBase
 {
 
-    private readonly ApplicationContext _context;
+    private readonly DatabaseContext _context;
     
-    public AnonymUserController(ApplicationContext context) 
+    public AnonymUserController(DatabaseContext context) 
     {
         _context = context;
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<Vacances>> Anonym(int id)
+    public async Task<ActionResult<AnonymUser>> Anonym(int id)
     {
         var result = await this._context.AnonymUsers.FindAsync(id);
         if (result == null)
