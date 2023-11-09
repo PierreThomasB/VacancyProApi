@@ -11,6 +11,7 @@ using VacancyProAPI;
 using VacancyProAPI.Models;
 using VacancyProAPI.Services.ChatService;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Services.MailService;
 using VacancyProAPI.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,7 @@ var connectionString = configuration.GetConnectionString("default");
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionString));
 
