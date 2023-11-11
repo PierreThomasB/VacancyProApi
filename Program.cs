@@ -28,7 +28,10 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
-
+builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
+{
+    builder.WithOrigins(configuration.GetSection("CorsURL").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+}));
 builder.Services.AddSignalR();
 var connectionString = configuration.GetConnectionString("default");
 
@@ -93,6 +96,7 @@ using (var scope = app.Services.CreateScope())
 }
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseCors("VacancyPro");
 app.UseAuthorization();
 
 app.MapControllers();

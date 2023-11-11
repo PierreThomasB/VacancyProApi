@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -77,8 +78,12 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Les informations transmises sont invalide", typeof(ErrorViewModel))]
         public async Task<ActionResult<SuccessViewModel>> SignUp(UserSignUpDto request)
         {
+            
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
+            var exist = _userManager.Users
+                .FirstOrDefault(u => u.UserName.Equals($"{request.FirstName} {request.LastName}"));
+            if (exist != null) return BadRequest(new ErrorViewModel("Nom d'utilisateur déjà existant")); 
             var user = new User
             {
                 UserName = $"{request.FirstName} {request.LastName}",
