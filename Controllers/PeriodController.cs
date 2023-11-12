@@ -27,7 +27,7 @@ public class PeriodController : ControllerBase
 
     public async Task<ActionResult<IEnumerable<Period>>> GetAllVacances()
     {
-        return Ok(await _context.Periods.ToListAsync());
+        return Ok(await _context.Periods.Include(e  => e.Place).ToListAsync());
     }
 
     [HttpGet("{id}")]
@@ -49,7 +49,7 @@ public class PeriodController : ControllerBase
     {
 
 
-        await _placeController.AddPlace(p.Place);
+        Place place = await _placeController.AddPlace(p.Place);
        
         
         
@@ -61,7 +61,7 @@ public class PeriodController : ControllerBase
         vacancesObj.BeginDate = p.BeginDate;
         vacancesObj.EndDate = p.EndDate;
        // vacancesObj.Creator = p.Creator;
-        vacancesObj.Place = p.Place;
+        vacancesObj.Place = place;
        // vacancesObj.ListUser = new HashSet<User>();
         //vacancesObj.ListActivity = new List<Activity>();
        
