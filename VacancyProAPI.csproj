@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Models\ConfigurationFiles\" />
-    <Folder Include="Models\DbModels\" />
     <Folder Include="Models\ViewModels\" />
     <Folder Include="Services\FireBase\" />
   </ItemGroup>

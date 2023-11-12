@@ -11,6 +11,8 @@ public class DatabaseContext : IdentityDbContext<User>
 
     public DbSet<Activity> Activities { get; set; }
     
+    public DbSet<Place> Places { get; set; }
+    
     public DbSet<AnonymUser> AnonymUsers { get; set; }
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
@@ -23,8 +25,10 @@ public class DatabaseContext : IdentityDbContext<User>
 
         builder.Entity<User>().HasMany(u => u.Periods);
 
-        builder.Entity<Period>().HasOne(p => p.Creator);
+        //builder.Entity<Period>().HasOne(p => p.Creator);
+        /*
         builder.Entity<Period>().HasMany(p => p.ListUser);
         builder.Entity<Period>().HasMany(p => p.ListActivity);
+        */
     }
 }

@@ -14,10 +14,12 @@ public class PeriodController : ControllerBase
 {
 
     private readonly DatabaseContext _context;
+    private readonly PlaceController _placeController;
 
-    public PeriodController(DatabaseContext context)
+    public PeriodController(DatabaseContext context )
     {
         _context = context;
+        _placeController = new PlaceController(context);
     }
 
 
@@ -46,35 +48,35 @@ public class PeriodController : ControllerBase
     public async Task<IActionResult> Post([FromBody] Period p)
     {
 
-        /*
-        Period vacancesObj = new Period(
 
-        {
-            Name = p.Name,
-            Description = p.Description,
-            BeginDate = p.BeginDate,
-            EndDate = p.EndDate,
-            Creator = p.Creator,
-            Place = p.Place,
-            ListUser = new HashSet<User>(),
-            ListActivity = new List<Activity>(),
-        };
-        ;
+        await _placeController.AddPlace(p.Place);
+       
         
-        **/
+        
+        Period vacancesObj = new Period();
 
 
-        _context.Periods.Add(p);
+        vacancesObj.Name = p.Name;
+        vacancesObj.Description = p.Description;
+        vacancesObj.BeginDate = p.BeginDate;
+        vacancesObj.EndDate = p.EndDate;
+       // vacancesObj.Creator = p.Creator;
+        vacancesObj.Place = p.Place;
+       // vacancesObj.ListUser = new HashSet<User>();
+        //vacancesObj.ListActivity = new List<Activity>();
+       
+        
+        
+        _context.Periods.Add(vacancesObj);
         await _context.SaveChangesAsync();
 
 
-        return CreatedAtAction("GetVacances", new { id = p.Id }, p);
+        return CreatedAtAction("GetVacances", new { id = p.Id }, vacancesObj);
 
     }
 
-
-
-[HttpDelete("Delete")]
+   
+    [HttpDelete("Delete")]
 
     public async Task<IActionResult> DeleteVacances(string id)
     {

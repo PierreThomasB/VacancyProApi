@@ -129,19 +129,26 @@ namespace VacancyProAPI.Controllers
             }
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            
             user.Periods = _context.Users
                 .Where(u => u.Id == user.Id)
                 .Include(u => u.Periods).ThenInclude(p => p.Place)
+                /*
                 .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
                 .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                */
                 .FirstOrDefault()!.Periods;
 
+            /*
             user.Periods = _context.Periods.Where(p => p.Creator.Id == user.Id)
+                /*
                 .Include(p => p.ListActivity).ThenInclude(a => a.Place)
                 .Include(p => p.Place)
                 //.Include(p => p.PeriodPlace.Id == _context.PeriodPlaces.First(place => place.Id == p.PeriodPlace.Id).Id)
                 .Include(p => p.ListUser)
+                
                 .ToList();
+            */
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }

@@ -62,6 +62,8 @@ public class ActivityController : ControllerBase
     
     
 
+    
+    /*
     [HttpGet("GetByVacances")]
     public async Task<ActionResult<Activity>> GetActiviteByVacances(int idVacances)
     {
@@ -75,7 +77,7 @@ public class ActivityController : ControllerBase
     }
     
     
-    
+    */
     
     
 }
