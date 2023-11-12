@@ -46,7 +46,6 @@ namespace VacancyProAPI.Controllers
         public async Task<ActionResult<SuccessViewModel>> Contact(ContactDto request)
         {
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
-            var user = await _userManager.FindByEmailAsync(request.Email);
             _mailService.SendMail(new ContactToAdminMail(request.Subject, null, request.Email,
                 new[] { request.Message }));
             _mailService.SendMail(new ContactToUser("Contact avec l'équipe d'adninistration", request.Email, null,
