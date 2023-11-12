@@ -12,8 +12,9 @@ namespace VacancyProAPI.Controllers;
 [Route("api/[controller]")]
 public class PeriodController : ControllerBase
 {
-    
+
     private readonly DatabaseContext _context;
+
     public PeriodController(DatabaseContext context)
     {
         _context = context;
@@ -21,10 +22,10 @@ public class PeriodController : ControllerBase
 
 
     [HttpGet("AllPeriods")]
-  
+
     public async Task<ActionResult<IEnumerable<Period>>> GetAllVacances()
     {
-        return  Ok(await _context.Periods.ToListAsync());
+        return Ok(await _context.Periods.ToListAsync());
     }
 
     [HttpGet("{id}")]
@@ -42,10 +43,12 @@ public class PeriodController : ControllerBase
 
 
     [HttpPost("NewVacances")]
-    public async  Task<IActionResult> Post([FromBody]Period p)
+    public async Task<IActionResult> Post([FromBody] Period p)
     {
-        
-        Period vacancesObj = new Period()
+
+        /*
+        Period vacancesObj = new Period(
+
         {
             Name = p.Name,
             Description = p.Description,
@@ -53,21 +56,25 @@ public class PeriodController : ControllerBase
             EndDate = p.EndDate,
             Creator = p.Creator,
             Place = p.Place,
-
             ListUser = new HashSet<User>(),
             ListActivity = new List<Activity>(),
         };
+        ;
+        
+        **/
 
-         _context.Periods.Add(vacancesObj);
-         await _context.SaveChangesAsync();
+
+        _context.Periods.Add(p);
+        await _context.SaveChangesAsync();
 
 
-        return CreatedAtAction("GetVacances", new { id = vacancesObj.Id }, vacancesObj);
+        return CreatedAtAction("GetVacances", new { id = p.Id }, p);
 
     }
 
 
-    [HttpDelete("Delete")]
+
+[HttpDelete("Delete")]
 
     public async Task<IActionResult> DeleteVacances(string id)
     {

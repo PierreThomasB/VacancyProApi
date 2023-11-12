@@ -30,6 +30,7 @@ public class ActivityController : ControllerBase
     [HttpPost("NewActivite")]
     public async Task<IActionResult> Post([FromBody] Activity activity)
     {
+        /*
         Activity activiteObj = new Activity()
         {
             Name = activity.Name,
@@ -39,10 +40,11 @@ public class ActivityController : ControllerBase
             EndDate = activity.EndDate,
             Period = activity.Period,
         };
-        _context.Activities.Add(activiteObj);
+        */
+        _context.Activities.Add(activity);
         await _context.SaveChangesAsync();
         
-        return CreatedAtAction("GetActivity", new { id = activiteObj.Id }, activiteObj);
+        return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
     
     [HttpGet("{id}")]

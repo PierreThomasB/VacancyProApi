@@ -10,15 +10,15 @@ namespace VacancyProAPI.Models.DbModels
         public string Description { get; set; }
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
-        public Place Place { get; set; }
+        public string Place { get; set; }
         
         public User Creator { get; set; }
         public IEnumerable<User> ListUser { get; set; }
         public IEnumerable<Activity> ListActivity { get; set; }
         
-        public Period() {}
+      
         
-        public Period(string name, string description, DateTime beginDate, DateTime endDate, User creator, Place place)
+        public Period(string name, string description, DateTime beginDate, DateTime endDate, User creator, string place)
         {
             Name = name;
             Description = description;

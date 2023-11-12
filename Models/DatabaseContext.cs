@@ -10,7 +10,6 @@ public class DatabaseContext : IdentityDbContext<User>
     public DbSet<Period> Periods { get; set; }
 
     public DbSet<Activity> Activities { get; set; }
-    public DbSet<Place> Places { get; set; }
     
     public DbSet<AnonymUser> AnonymUsers { get; set; }
     public DatabaseContext(DbContextOptions<DatabaseContext> options)

@@ -4,11 +4,8 @@ namespace VacancyProAPI.Models.DbModels
 {
     public class Activity
     {
-        public Activity()
-        {
-            
-        }
-        public Activity(string name, string description, DateTime beginDate, DateTime endDate, Place activityPlace, Period period)
+     
+        public Activity(string name, string description, DateTime beginDate, DateTime endDate, string activityPlace, Period period)
         {
             Name = name;
             Description = description;
@@ -30,7 +27,7 @@ namespace VacancyProAPI.Models.DbModels
         [Required]
         public DateTime EndDate { get; set; }
         [Required]
-        public Place Place { get; set; }
+        public string Place { get; set; }
         [Required]
         public Period Period { get; set; }
 
