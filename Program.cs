@@ -33,7 +33,7 @@ builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
     builder.WithOrigins(configuration.GetSection("CorsURL").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
 }));
 builder.Services.AddSignalR();
-var connectionString = configuration.GetConnectionString("default");
+var connectionString = configuration.GetConnectionString("PierreDb");
 
 
 builder.Services.AddControllersWithViews();
