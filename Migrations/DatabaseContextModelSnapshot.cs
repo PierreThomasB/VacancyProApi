@@ -208,13 +208,14 @@ namespace VacancyProAPI.Migrations
                     b.Property<int>("PeriodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Place")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PlaceId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PeriodId");
+
+                    b.HasIndex("PlaceId");
 
                     b.ToTable("Activities");
                 });
@@ -242,6 +243,7 @@ namespace VacancyProAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlaceId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
@@ -393,25 +395,38 @@ namespace VacancyProAPI.Migrations
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Activity", b =>
                 {
                     b.HasOne("VacancyProAPI.Models.DbModels.Period", "Period")
-                        .WithMany()
+                        .WithMany("ListActivity")
                         .HasForeignKey("PeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VacancyProAPI.Models.DbModels.Place", "Place")
+                        .WithMany()
+                        .HasForeignKey("PlaceId");
+
                     b.Navigation("Period");
+
+                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Period", b =>
                 {
                     b.HasOne("VacancyProAPI.Models.DbModels.Place", "Place")
                         .WithMany()
-                        .HasForeignKey("PlaceId");
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VacancyProAPI.Models.DbModels.User", null)
                         .WithMany("Periods")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Place");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.DbModels.Period", b =>
+                {
+                    b.Navigation("ListActivity");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.User", b =>

@@ -11,44 +11,70 @@ namespace VacancyProAPI.Controllers;
 public class ActivityController : ControllerBase
 {
     private readonly DatabaseContext _context;
+    private readonly PlaceController _placeController;
 
     public ActivityController(DatabaseContext context)
     {
         _context = context;
+        this._placeController = new PlaceController(context);
     }
     
     
     
     [HttpGet("AllActivity")]
-    public async Task<ActionResult<IEnumerable<Period>>> GetAllActivite()
+    public async Task<ActionResult<IEnumerable<Activity>>> GetAllActivite()
     {
         var val = await _context.Activities.ToListAsync();
         return  Ok(val);
     }
 
 
-    [HttpPost("NewActivite")]
+    [HttpPost("NewActivity")]
     public async Task<IActionResult> Post([FromBody] Activity activity)
     {
-        /*
-        Activity activiteObj = new Activity()
+        Place place  = await _placeController.AddPlace(activity.Place);
+        Period? period = (await _context.Periods.FindAsync(activity.Period.Id));
+        if (period == null)
         {
-            Name = activity.Name,
-            Description = activity.Description,
-            Place = activity.Place,
-            BeginDate = activity.BeginDate,
-            EndDate = activity.EndDate,
-            Period = activity.Period,
-        };
-        */
-        _context.Activities.Add(activity);
+            return BadRequest("La période ne peux etre nule ");
+        }
+        
+        
+        Activity activiteObj = new Activity();
+
+        activiteObj.Name = activity.Name;
+        activiteObj.Description = activity.Description;
+        activiteObj.Place = place;
+        activiteObj.BeginDate = activity.BeginDate;
+        activiteObj.EndDate = activity.EndDate;
+        activiteObj.Period = period!;
+        
+        
+        _context.Activities.Add(activiteObj);
+        _context.Periods.Update(period);
+        
         await _context.SaveChangesAsync();
         
-        return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
+        return CreatedAtAction("GetActivity", new { id = activity.Id }, activiteObj);
+    }
+
+
+
+
+
+    [HttpGet("ActivityByPeriod")]
+    public async Task<ActionResult<Activity>> ActivitiesByPeriodId(int? id)
+    {
+        if (!id.HasValue)
+        {
+            return  BadRequest("L'id ne peux être nul");
+        }
+        var result =  _context.Activities.Include(p => p.Place).Include(pl => pl.Period).Where(a => a.Id == id);
+        return Ok(result);
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<Period>> GetActivity(int id)
+    public async Task<ActionResult<Activity>> GetActivity(int id)
     {
         var result = await this._context.Activities.FindAsync(id);
         if (result == null)

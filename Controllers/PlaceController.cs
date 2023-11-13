@@ -20,8 +20,7 @@ public class PlaceController
 
     public async Task<Place> AddPlace(Place placeObj)
     {
-
-        if ( await _context.Places.FindAsync(placeObj.Id) == null)
+        if (await _context.Places.FindAsync(placeObj.Id) == null)
         {
             Place place = new Place
             {
