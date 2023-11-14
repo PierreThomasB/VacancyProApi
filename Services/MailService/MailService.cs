@@ -23,13 +23,31 @@ public class MailService : IMailService
 
         /*var bodyBuilder = new BodyBuilder();
         bodyBuilder.TextBody = defaultMail.GetMailBody();
-        mail.Body = bodyBuilder.ToMessageBody();*/
+        mail.Body = bodyBuilder.ToMessageBody();
         using (var smtp = new SmtpClient())
         {
             smtp.Connect(_configuration["MailSettings:ServerName"],
                 int.Parse(_configuration["MailSettings:ServerPort"]!), MailKit.Security.SecureSocketOptions.None);
             smtp.Send(mail);
             smtp.Disconnect(true);
-        }
+        }*/
+        new Thread(() =>
+        {
+            var smtp = new SmtpClient();
+            try
+            {
+                smtp.Connect(_configuration["MailSettings:ServerName"],
+                    int.Parse(_configuration["MailSettings:ServerPort"]),
+                    MailKit.Security.SecureSocketOptions.None);
+                smtp.Send(mail);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                smtp.Disconnect(true);
+            }
+        });
     }
 }

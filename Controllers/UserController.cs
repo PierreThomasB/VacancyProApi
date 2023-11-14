@@ -8,7 +8,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 using VacancyProAPI.Models.DTOs;
+using VacancyProAPI.Models.Mails;
 using VacancyProAPI.Models.ViewModels;
+using VacancyProAPI.Services.MailService;
 using VacancyProAPI.Services.UserService;
 
 namespace VacancyProAPI.Controllers
@@ -24,6 +26,7 @@ namespace VacancyProAPI.Controllers
         private readonly DatabaseContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _config;
+        private readonly IMailService _mailService;
         private readonly IUserService _userService;
 
         /// <summary>
@@ -32,12 +35,14 @@ namespace VacancyProAPI.Controllers
         /// <param name="context">Objet permettant d'intéragir avec la base de données</param>
         /// <param name="userManager">Service permettant de gérer l'utilisateur connecté</param>
         /// <param name="config">Objet contenant la configuration du système</param>
+        /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         /// <param name="userService">Service permettant d'intéragir avec l'utilisateur connecté</param>
-        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config, IUserService userService)
+        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config,IMailService mailService, IUserService userService)
         {
             _context = context;
             _userManager = userManager;
             _config = config;
+            _mailService = mailService;
             _userService = userService;
         }
 
@@ -99,6 +104,7 @@ namespace VacancyProAPI.Controllers
                 return BadRequest(new ErrorViewModel(string.Join(" | ", result.Errors.Select(e => e.Code))));
             await _userManager.AddToRoleAsync(user, "Member");
             
+            _mailService.SendMail(new AddAccountMail("Bienvenue sur Vacancy Pro !", user.Email, null,new []{user.UserName}));
 
             return Ok(new SuccessViewModel("Compte créé avec succès"));
         }
