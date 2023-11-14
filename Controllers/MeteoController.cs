@@ -8,9 +8,7 @@ namespace VacancyProAPI.Controllers;
 public class MeteoController : ControllerBase
 {
 
-
-    private const string ApiKey = "e673e42fd6f4e270fd86ae218fbc7d07";
-
+    
     private const string Url =
         "http://api.weatherstack.com/current?access_key=e673e42fd6f4e270fd86ae218fbc7d07&query=";
     
