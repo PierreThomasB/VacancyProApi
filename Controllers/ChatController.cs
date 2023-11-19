@@ -1,33 +1,32 @@
-using Microsoft.AspNetCore.Http.HttpResults;
+
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.SignalR;
-using VacancyProAPI.Models;
-using VacancyProAPI.Services.ChatService;
+using PusherServer;
 
 namespace VacancyProAPI.Controllers;
 
-
-
-[Route("api/chat")]
-[ApiController]
-public class ChatController
-{
-
-    private readonly IHubContext<ChatHub> _hubContext;
+public class ChatController : ControllerBase {
     
     
-    public ChatController(IHubContext<ChatHub> hubContext)
-    {
-        _hubContext = hubContext;
-    }
-
-    [Route("send")]                                         
     [HttpPost]
-    public IActionResult SendRequest([FromBody] MessageDto msg)
-    {
-        _hubContext.Clients.All.SendAsync("ReceiveOne", msg.User, msg.MsgText);
-        return null;
-    }
+    public async Task<ActionResult> HelloWorld() {
+        var options = new PusherOptions
+        {
+            Cluster = "eu",
+            Encrypted = true
+        };
 
+        var pusher = new Pusher(
+            "1708130",
+            "74f1716b51dbbc6c19ca",
+            "c3341eb1f00700d5711a",
+            options);
+
+        var result = await pusher.TriggerAsync(
+            "my-channel",
+            "my-event",
+            new { message = "hello world" } );
+
+        return Ok();
+    }
 }
