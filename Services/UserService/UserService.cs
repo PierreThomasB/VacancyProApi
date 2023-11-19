@@ -11,18 +11,17 @@ public class UserService : IUserService
     {
         _httpContextAccessor = httpContextAccessor;
     }
-    public string? GetUserFromToken()
-    {
-        throw new NotImplementedException();
-    }
+
+    public string? GetUserIdFromToken()
+        => _httpContextAccessor?.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
     public bool IsTokenValid()
     {
-        throw new NotImplementedException();
+        var exp = _httpContextAccessor?.HttpContext?.User?.FindFirstValue("exp");
+        var date = exp != null ? DateTimeOffset.FromUnixTimeSeconds(long.Parse(exp)).DateTime : DateTime.MinValue;
+        return date > DateTime.Now;
     }
 
     public bool IsUserAdmin()
-    {
-        throw new NotImplementedException();
-    }
+        => _httpContextAccessor?.HttpContext?.User?.IsInRole("Admin") ?? false;
 }

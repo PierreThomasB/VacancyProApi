@@ -46,6 +46,29 @@ namespace VacancyProAPI.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Member,Admin")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère les information de l'utilisateur connecté")]
+        public async Task<ActionResult<UserViewModel>> WhoAmI()
+        {
+            var id = _userService.GetUserIdFromToken();
+            if (id == null) return NotFound(new ErrorViewModel("Aucun utilisateur associé à ce token"));
+
+            var user = await _userManager.FindByIdAsync(id);
+            
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            user.Periods = _context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Periods).ThenInclude(p => p.Place)
+                /*
+                .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
+                .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                */
+                .FirstOrDefault()!.Periods;
+            return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+        }
+
         /// <summary>
         /// Route (GET) qui permet de récupérer les utilisateurs de l'application
         /// </summary>
@@ -69,6 +92,18 @@ namespace VacancyProAPI.Controllers
 
             return Ok(userViewModels);
         }
+
+        /// <summary>
+        /// Route (GET) qui permet de récupérer le nombre d'utilisateur
+        /// </summary>
+        /// <returns>le nombre d'utilisateur</returns>
+        [AllowAnonymous]
+        [HttpGet("Count")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère le nombre d'utilisateurs")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Le nombre d'utilisateurs a bien été récupéré", typeof(int))]
+        public ActionResult<int> GetUsersCount() =>Ok(_context.Users.Count());
+        
         /// <summary>
         /// Route (POST) qui permet de créer un utilisateur
         /// </summary>
