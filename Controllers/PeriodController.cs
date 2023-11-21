@@ -78,7 +78,7 @@ public class PeriodController : ControllerBase
    
     [HttpDelete("Delete")]
 
-    public async Task<IActionResult> DeleteVacances(string id)
+    public async Task<IActionResult> DeleteVacances(int id)
     {
         
         

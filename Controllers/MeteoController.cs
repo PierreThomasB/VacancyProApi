@@ -19,15 +19,16 @@ public class MeteoController : ControllerBase
         {
             try
             {
-                HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(Url+lieu);
+                HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(Url + lieu);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     string apiResponse = await httpResponseMessage.Content.ReadAsStringAsync();
                     return Ok(apiResponse);
                 }
-               
-                return NotFound("La vile n'a pas été trouvée"+httpResponseMessage.StatusCode);
-            }  catch (HttpRequestException e)
+
+                return NotFound("La vile n'a pas été trouvée" + httpResponseMessage.StatusCode);
+            }
+            catch (HttpRequestException e)
             {
                 return BadRequest("Erreur dans la requête");
             }
