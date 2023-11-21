@@ -157,7 +157,7 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été connecté", typeof(SuccessViewModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations de connexion sont invalide", typeof(ErrorViewModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
-        public async Task<ActionResult<UserViewModel>> SingIn(UserSignInDto request)
+        public async Task<ActionResult<UserViewModel>> SignIn(UserSignInDto request)
         {
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
