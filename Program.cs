@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using VacancyProAPI;
 using VacancyProAPI.Models;
 using VacancyProAPI.Services.ChatService;
@@ -31,7 +32,7 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 });
 builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
 {
-    builder.WithOrigins(configuration.GetSection("CorsURL").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+    builder.WithOrigins(configuration.GetSection("CorsURL")!.Value!).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
 }));
 builder.Services.AddSignalR();
 var connectionString = configuration.GetConnectionString("PierreDb");

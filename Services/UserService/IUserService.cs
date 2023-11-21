@@ -2,7 +2,7 @@
 
 public interface IUserService
 {
-    string? GetUserFromToken();
+    string? GetUserIdFromToken();
     bool IsTokenValid();
     bool IsUserAdmin();
 }

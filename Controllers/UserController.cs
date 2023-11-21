@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +47,29 @@ namespace VacancyProAPI.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Member,Admin")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère les information de l'utilisateur connecté")]
+        public async Task<ActionResult<UserViewModel>> WhoAmI()
+        {
+            var id = _userService.GetUserIdFromToken();
+            if (id == null) return NotFound(new ErrorViewModel("Aucun utilisateur associé à ce token"));
+
+            var user = await _userManager.FindByIdAsync(id);
+            
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            user.Periods = _context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Periods).ThenInclude(p => p.Place)
+                /*
+                .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
+                .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                */
+                .FirstOrDefault()!.Periods;
+            return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+        }
+
         /// <summary>
         /// Route (GET) qui permet de récupérer les utilisateurs de l'application
         /// </summary>
@@ -69,6 +93,18 @@ namespace VacancyProAPI.Controllers
 
             return Ok(userViewModels);
         }
+
+        /// <summary>
+        /// Route (GET) qui permet de récupérer le nombre d'utilisateur
+        /// </summary>
+        /// <returns>le nombre d'utilisateur</returns>
+        [AllowAnonymous]
+        [HttpGet("Count")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère le nombre d'utilisateurs")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Le nombre d'utilisateurs a bien été récupéré", typeof(int))]
+        public ActionResult<int> GetUsersCount() =>Ok(_context.Users.Count());
+        
         /// <summary>
         /// Route (POST) qui permet de créer un utilisateur
         /// </summary>
@@ -86,8 +122,9 @@ namespace VacancyProAPI.Controllers
             
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
-            var exist = _userManager.Users
-                .FirstOrDefault(u => u.UserName.Equals($"{request.FirstName} {request.LastName}"));
+            /*var exist = _userManager.Users
+                .FirstOrDefault(u => u.UserName.Equals($"{request.FirstName} {request.LastName}"));*/
+            var exist = _userManager.Users.FirstOrDefault(u => u.Email.Equals(request.Email));
             if (exist != null) return BadRequest(new ErrorViewModel("Nom d'utilisateur déjà existant")); 
             var user = new User
             {
@@ -121,7 +158,7 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été connecté", typeof(SuccessViewModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations de connexion sont invalide", typeof(ErrorViewModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
-        public async Task<ActionResult<UserViewModel>> SingIn(UserSignInDto request)
+        public async Task<ActionResult<UserViewModel>> SignIn(UserSignInDto request)
         {
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
@@ -157,6 +194,47 @@ namespace VacancyProAPI.Controllers
             */
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+        }
+
+        /// <summary>
+        /// Route (POST) qui permet de connecter un utilisateur via son token Google
+        /// </summary>
+        /// <param name="request">Le token fourni par Google</param>
+        /// <returns>Les informations de l'utilisateur (sous forme de ViewModel) qui souhaite se connecter via Google</returns>
+        [AllowAnonymous]
+        [HttpPost("Google")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Connecte un utilisateur via son token Google")]
+        [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été connecté", typeof(UserViewModel))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Le token Google est invalide", typeof(ErrorViewModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
+        public async Task<ActionResult<UserViewModel>> Google(OAuthDto request)
+        {
+            if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
+
+            try
+            {
+                var payload = GoogleJsonWebSignature
+                    .ValidateAsync(request.Credentials, new GoogleJsonWebSignature.ValidationSettings()).Result;
+
+                var user = _userManager.FindByEmailAsync(payload.Email).Result;
+                if (user == null) return NotFound(new ErrorViewModel(payload.Email));
+                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                user.Periods = _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .Include(u => u.Periods).ThenInclude(p => p.Place)
+                    /*
+                    .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
+                    .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                    */
+                    .FirstOrDefault()!.Periods;
+                return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorViewModel("Requête invalide"));
+            }
+            
         }
         
         /// <summary>

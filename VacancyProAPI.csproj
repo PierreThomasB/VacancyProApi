@@ -61,6 +61,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     <Folder Include="Models\ViewModels\" />
     <Folder Include="Services\FireBase\" />
+    <Compile Remove="Migrations\20231025182640_InitialCreate.Designer.cs" />
   </ItemGroup>
 
 </Project>
