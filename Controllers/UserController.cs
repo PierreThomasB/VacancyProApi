@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -192,6 +193,47 @@ namespace VacancyProAPI.Controllers
             */
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+        }
+
+        /// <summary>
+        /// Route (POST) qui permet de connecter un utilisateur via son token Google
+        /// </summary>
+        /// <param name="request">Le token fourni par Google</param>
+        /// <returns>Les informations de l'utilisateur (sous forme de ViewModel) qui souhaite se connecter via Google</returns>
+        [AllowAnonymous]
+        [HttpPost("Google")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Connecte un utilisateur via son token Google")]
+        [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a bien été connecté", typeof(UserViewModel))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Le token Google est invalide", typeof(ErrorViewModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
+        public async Task<ActionResult<UserViewModel>> Google(OAuthDto request)
+        {
+            if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
+
+            try
+            {
+                var payload = GoogleJsonWebSignature
+                    .ValidateAsync(request.Credentials, new GoogleJsonWebSignature.ValidationSettings()).Result;
+
+                var user = _userManager.FindByEmailAsync(payload.Email).Result;
+                if (user == null) return NotFound(new ErrorViewModel(payload.Email));
+                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                user.Periods = _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .Include(u => u.Periods).ThenInclude(p => p.Place)
+                    /*
+                    .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
+                    .Include(u => u.Periods).ThenInclude(p => p.Creator)
+                    */
+                    .FirstOrDefault()!.Periods;
+                return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ErrorViewModel("Requête invalide"));
+            }
+            
         }
         
         /// <summary>
