@@ -122,8 +122,9 @@ namespace VacancyProAPI.Controllers
             
             if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
 
-            var exist = _userManager.Users
-                .FirstOrDefault(u => u.UserName.Equals($"{request.FirstName} {request.LastName}"));
+            /*var exist = _userManager.Users
+                .FirstOrDefault(u => u.UserName.Equals($"{request.FirstName} {request.LastName}"));*/
+            var exist = _userManager.Users.FirstOrDefault(u => u.Email.Equals(request.Email));
             if (exist != null) return BadRequest(new ErrorViewModel("Nom d'utilisateur déjà existant")); 
             var user = new User
             {
