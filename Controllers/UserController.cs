@@ -237,6 +237,16 @@ namespace VacancyProAPI.Controllers
             
         }
         
+        [HttpGet]
+        [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a été trouvé", typeof(SuccessViewModel))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations fournies sont invalide", typeof(ErrorViewModel))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
+        public async Task<ActionResult<UserViewModel>> SuggestUser(string username)
+        {
+            var result =  _context.Users.Where(r => r.UserName == username);
+            return Ok(result);
+        }
+        
         /// <summary>
         /// Route (PUT) qui permet de modifier le nom d'utilisateur de l'utilisateur connecté
         /// </summary>

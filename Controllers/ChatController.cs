@@ -1,11 +1,18 @@
 
 using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PusherServer;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 
 namespace VacancyProAPI.Controllers;
+
+
+[ApiController]
+[Route("[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 public class ChatController : ControllerBase
 {

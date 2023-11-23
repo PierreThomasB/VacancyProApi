@@ -16,11 +16,9 @@ namespace VacancyProAPI.Models.DbModels
         public DateTime EndDate { get; set; }
         [Required]
         public Place Place { get; set; } = null!;
-
-     
-
-        //public User Creator { get; set; } = null!;
-        //public IEnumerable<User> ListUser { get; set; } = null!;
+        
+        public User Creator { get; set; } = null!;
+        public List<User> ListUser { get; set; } = null!;
        
 
         public Period() {}

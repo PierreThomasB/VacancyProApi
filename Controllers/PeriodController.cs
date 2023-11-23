@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Models.ViewModels;
 
 namespace VacancyProAPI.Controllers;
 
@@ -10,6 +14,8 @@ namespace VacancyProAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 public class PeriodController : ControllerBase
 {
 
@@ -24,6 +30,9 @@ public class PeriodController : ControllerBase
 
 
     [HttpGet("AllPeriods")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+
 
     public async Task<ActionResult<IEnumerable<Period>>> GetAllVacances()
     {
@@ -31,6 +40,10 @@ public class PeriodController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "La période de vacances n'existe pas", typeof(ErrorViewModel))]
+
+
     public async Task<ActionResult<Period>> GetVacances(int id)
     {
         var result = await this._context.Periods.FindAsync(id);
@@ -45,6 +58,9 @@ public class PeriodController : ControllerBase
 
 
     [HttpPost("NewVacances")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+
     public async Task<IActionResult> Post([FromBody] Period p)
     {
 
@@ -77,7 +93,8 @@ public class PeriodController : ControllerBase
 
    
     [HttpDelete("Delete")]
-
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     public async Task<IActionResult> DeleteVacances(int id)
     {
         
@@ -92,6 +109,27 @@ public class PeriodController : ControllerBase
             _context.Periods.Remove(vacances);
             await _context.SaveChangesAsync();
             return Ok("Les vacances ont bien été supprimé ");
+        }
+
+       
+    }
+    
+    
+    [HttpPut("AddUser")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    public async Task<IActionResult> AddUser(User user, int period)
+    {
+        Period result = await this._context.Periods.FindAsync(period);
+        
+        if (result == null)
+        {
+            return BadRequest("L'id des vacances n'a pas été trouvé");
+        }
+        else
+        {
+            result.ListUser.Add(user);
+            await _context.SaveChangesAsync();
+            return Ok("La personne à bien été ajoutée");
         }
 
        
