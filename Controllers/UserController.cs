@@ -93,6 +93,26 @@ namespace VacancyProAPI.Controllers
 
             return Ok(userViewModels);
         }
+        [AllowAnonymous]
+        [HttpPost("InVacation")]
+        [Produces("application/json")]
+        public async Task<ActionResult<Dictionary<string, int>>> GetCountUsersByPlaces(DateDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorViewModel("Données invalides"));
+            }
+            Dictionary<string, int> result = new Dictionary<string, int>();
+            var activePeriods = await _context.Periods
+                .Include(p => p.Place)
+                .Where(p => p.BeginDate <= request.Date && request.Date <= p.EndDate)
+                .ToListAsync();
+            foreach (var period in activePeriods)
+            {
+                result.Add(period.Place!.Name.Split(",").Last().Trim(), 1);
+            }
+            return Ok(result);
+        }
 
         /// <summary>
         /// Route (GET) qui permet de récupérer le nombre d'utilisateur
