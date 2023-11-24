@@ -66,6 +66,7 @@ public class PeriodController : ControllerBase
 
 
         Place place = await _placeController.AddPlace(p.Place);
+        var user = await  _context.Users.FindAsync(p.Creator.Id);
        
         
         
@@ -76,12 +77,10 @@ public class PeriodController : ControllerBase
         vacancesObj.Description = p.Description;
         vacancesObj.BeginDate = p.BeginDate;
         vacancesObj.EndDate = p.EndDate;
-       // vacancesObj.Creator = p.Creator;
+        vacancesObj.Creator = user!;
         vacancesObj.Place = place;
-       // vacancesObj.ListUser = new HashSet<User>();
-        //vacancesObj.ListActivity = new List<Activity>();
-       
-        
+        vacancesObj.ListUser = new List<User>();
+        vacancesObj.ListUser.Add(user);
         
         _context.Periods.Add(vacancesObj);
         await _context.SaveChangesAsync();
@@ -97,8 +96,6 @@ public class PeriodController : ControllerBase
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     public async Task<IActionResult> DeleteVacances(int id)
     {
-        
-        
         if (await this._context.Periods.FindAsync(id) == null)
         {
             return BadRequest("L'id des vacances n'a pas été trouvé");

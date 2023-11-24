@@ -59,14 +59,7 @@ namespace VacancyProAPI.Controllers
             var user = await _userManager.FindByIdAsync(id);
             
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-            user.Periods = _context.Users
-                .Where(u => u.Id == user.Id)
-                .Include(u => u.Periods).ThenInclude(p => p.Place)
-                /*
-                .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
-                .Include(u => u.Periods).ThenInclude(p => p.Creator)
-                */
-                .FirstOrDefault()!.Periods;
+            
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }
 
@@ -81,7 +74,7 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
         public async Task<ActionResult<List<UserViewModel>>> GetUsers()
         {
-            var users = await _context.Users.Include(u => u.Periods).ToListAsync();
+            var users = await _context.Users.ToListAsync();
 
             var userViewModels = new List<UserViewModel>();
 
@@ -130,7 +123,7 @@ namespace VacancyProAPI.Controllers
             {
                 UserName = $"{request.FirstName} {request.LastName}",
                 Email = request.Email,
-                Periods = new List<Period>()
+               
             };
             
             var result = request.Password != string.Empty 
@@ -173,14 +166,7 @@ namespace VacancyProAPI.Controllers
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             
-            user.Periods = _context.Users
-                .Where(u => u.Id == user.Id)
-                .Include(u => u.Periods).ThenInclude(p => p.Place)
-                /*
-                .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
-                .Include(u => u.Periods).ThenInclude(p => p.Creator)
-                */
-                .FirstOrDefault()!.Periods;
+           
 
             /*
             user.Periods = _context.Periods.Where(p => p.Creator.Id == user.Id)
@@ -220,14 +206,7 @@ namespace VacancyProAPI.Controllers
                 var user = _userManager.FindByEmailAsync(payload.Email).Result;
                 if (user == null) return NotFound(new ErrorViewModel(payload.Email));
                 var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-                user.Periods = _context.Users
-                    .Where(u => u.Id == user.Id)
-                    .Include(u => u.Periods).ThenInclude(p => p.Place)
-                    /*
-                    .Include(u => u.Periods).ThenInclude(p => p.ListActivity)
-                    .Include(u => u.Periods).ThenInclude(p => p.Creator)
-                    */
-                    .FirstOrDefault()!.Periods;
+              
                 return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
             }
             catch (Exception)
@@ -237,7 +216,7 @@ namespace VacancyProAPI.Controllers
             
         }
         
-        [HttpGet]
+        [HttpGet("SuggestionUser")]
         [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a été trouvé", typeof(SuccessViewModel))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations fournies sont invalide", typeof(ErrorViewModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]

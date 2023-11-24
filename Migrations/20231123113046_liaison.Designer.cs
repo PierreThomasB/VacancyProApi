@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VacancyProAPI.Models;
 
@@ -11,9 +12,11 @@ using VacancyProAPI.Models;
 namespace VacancyProAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231123113046_liaison")]
+    partial class liaison
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,6 +259,7 @@ namespace VacancyProAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -273,11 +277,16 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("PlaceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Periods");
                 });
@@ -442,13 +451,19 @@ namespace VacancyProAPI.Migrations
                 {
                     b.HasOne("VacancyProAPI.Models.DbModels.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VacancyProAPI.Models.DbModels.Place", "Place")
                         .WithMany()
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("VacancyProAPI.Models.DbModels.User", null)
+                        .WithMany("Periods")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Creator");
 
@@ -465,6 +480,11 @@ namespace VacancyProAPI.Migrations
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Period", b =>
                 {
                     b.Navigation("ListUser");
+                });
+
+            modelBuilder.Entity("VacancyProAPI.Models.DbModels.User", b =>
+                {
+                    b.Navigation("Periods");
                 });
 #pragma warning restore 612, 618
         }

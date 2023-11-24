@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PusherServer;
+using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Models.ViewModels;
 
 namespace VacancyProAPI.Controllers;
 
@@ -54,6 +56,8 @@ public class ChatController : ControllerBase
 
 
     [HttpGet("Message")]
+    [Produces("application/json")]
+
     public async Task<ActionResult> GetMessage(int id)
     {
         var values = await _context.Messages.FindAsync(id);
@@ -61,6 +65,9 @@ public class ChatController : ControllerBase
     }
     
     [HttpGet("AllMessage")]
+    [Produces("application/json")]
+    [SwaggerOperation(Summary = "Permet de recupérer les messages d'un channel")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide", typeof(ErrorViewModel))]
     public async Task<ActionResult> GetAllMessage(string channel)
     {
         var values =  _context.Messages.Where(a => a.Channel == channel);
