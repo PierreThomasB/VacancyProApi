@@ -11,6 +11,7 @@ namespace VacancyProAPI.Models.ViewModels
         
         public string Token { get; set; } = string.Empty;
         public bool IsAdmin { get; set; } = false;
+        public List<Period> Periods { get; set; } 
 
         public UserViewModel(User user,bool isAdmin, string token)
         {

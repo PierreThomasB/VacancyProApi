@@ -18,8 +18,11 @@ namespace VacancyProAPI.Models.DbModels
         [Required]
         public Place Place { get; set; } = null!;
         
-        public User Creator { get; set; } = null!;
-        public List<User> ListUser { get; set; } = null!;
+        //[Required]
+        //public User Creator { get; set; }
+        
+       
+        public  List<User> ListUser { get; set; } = new();
        
 
         public Period() {}
@@ -30,9 +33,8 @@ namespace VacancyProAPI.Models.DbModels
             Description = description;
             BeginDate = beginDate;
             EndDate = endDate;
-            //Creator = creator;
             Place = place;
-            //ListUser = new HashSet<User>();
+           
         }
     }
 }

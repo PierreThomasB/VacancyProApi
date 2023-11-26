@@ -4,6 +4,8 @@ namespace VacancyProAPI.Models.DbModels
 {
     public class User : IdentityUser, IEqualityComparer<User>
     {
+
+        public List<Period> Periods = new();
         public bool Equals(User? x, User? y)
         {
             if (x == null || y == null)return false;
