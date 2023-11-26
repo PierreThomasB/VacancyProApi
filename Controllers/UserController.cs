@@ -96,6 +96,8 @@ namespace VacancyProAPI.Controllers
         [AllowAnonymous]
         [HttpPost("InVacation")]
         [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère la liste des utilisateurs en vacances")]
+        [SwaggerResponse(StatusCodes.Status200OK, "La liste des utilisateurs en vacances a bien été récupérée", typeof(Dictionary<string, int>))]
         public async Task<ActionResult<Dictionary<string, int>>> GetCountUsersByPlaces(DateDto request)
         {
             if (!ModelState.IsValid)
