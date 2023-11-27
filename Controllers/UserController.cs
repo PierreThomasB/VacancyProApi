@@ -13,6 +13,7 @@ using VacancyProAPI.Models.Mails;
 using VacancyProAPI.Models.ViewModels;
 using VacancyProAPI.Services.MailService;
 using VacancyProAPI.Services.UserService;
+using DateDto = VacancyProAPI.Models.DTOs.DateDto;
 
 namespace VacancyProAPI.Controllers
 {
