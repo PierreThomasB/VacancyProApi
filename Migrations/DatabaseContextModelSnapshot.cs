@@ -155,32 +155,19 @@ namespace VacancyProAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("VacancyProAPI.Models.AnonymUser", b =>
+            modelBuilder.Entity("PeriodUser", b =>
                 {
-                    b.Property<int>("IdAnonym")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("ListUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PeriodsId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAnonym"));
+                    b.HasKey("ListUserId", "PeriodsId");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("PeriodsId");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsResolve")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Sujet")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IdAnonym");
-
-                    b.ToTable("AnonymUsers");
+                    b.ToTable("PeriodUser");
                 });
 
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Activity", b =>
@@ -220,6 +207,30 @@ namespace VacancyProAPI.Migrations
                     b.ToTable("Activities");
                 });
 
+            modelBuilder.Entity("VacancyProAPI.Models.DbModels.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Period", b =>
                 {
                     b.Property<int>("Id")
@@ -246,14 +257,9 @@ namespace VacancyProAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Periods");
                 });
@@ -392,10 +398,25 @@ namespace VacancyProAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PeriodUser", b =>
+                {
+                    b.HasOne("VacancyProAPI.Models.DbModels.User", null)
+                        .WithMany()
+                        .HasForeignKey("ListUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VacancyProAPI.Models.DbModels.Period", null)
+                        .WithMany()
+                        .HasForeignKey("PeriodsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VacancyProAPI.Models.DbModels.Activity", b =>
                 {
                     b.HasOne("VacancyProAPI.Models.DbModels.Period", "Period")
-                        .WithMany("ListActivity")
+                        .WithMany()
                         .HasForeignKey("PeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -417,21 +438,7 @@ namespace VacancyProAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VacancyProAPI.Models.DbModels.User", null)
-                        .WithMany("Periods")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Place");
-                });
-
-            modelBuilder.Entity("VacancyProAPI.Models.DbModels.Period", b =>
-                {
-                    b.Navigation("ListActivity");
-                });
-
-            modelBuilder.Entity("VacancyProAPI.Models.DbModels.User", b =>
-                {
-                    b.Navigation("Periods");
                 });
 #pragma warning restore 612, 618
         }

@@ -21,10 +21,10 @@ namespace VacancyProAPI.Models.DbModels
         [Key]
         [Required]
         public int Id { get; set; }
-        [Required]
+        [Required][MinLength(2)]
         public string Name { get; set; } = null!;
 
-        [Required]
+        [Required][MinLength(3)]
         public string Description { get; set; } = null!;
 
         [Required]

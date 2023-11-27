@@ -72,27 +72,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-/*builder.Services.AddSwaggerGen(options =>
+builder.Services.AddLogging(loggingBuilder =>
 {
-    options.EnableAnnotations();
-    
-    options.SwaggerDoc("V1", new OpenApiInfo
-    {
-        Version = "V1",
-        Title = "VacancyProAPI",
-        Description = "Une api pour l'application web et mobile VacancyPro"
-    });
-    
-    options.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
-    {
-        Description = "Standard Authorization Header using the Bearer scheme (\"bearer {token}\")",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-    
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-});*/
+    loggingBuilder.AddConsole(); 
+});
 
 FirebaseApp.Create(new AppOptions()
 {

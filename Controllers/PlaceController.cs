@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 
 namespace VacancyProAPI.Controllers;
+
 
 public class PlaceController 
 {
@@ -16,6 +18,7 @@ public class PlaceController
     {
         this._context = context;
     }
+
 
 
     public async Task<Place> AddPlace(Place placeObj)

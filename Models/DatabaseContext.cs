@@ -13,7 +13,9 @@ public class DatabaseContext : IdentityDbContext<User>
     
     public DbSet<Place> Places { get; set; }
     
-    public DbSet<AnonymUser> AnonymUsers { get; set; }
+    
+    public DbSet<Chat> Messages { get; set; }
+
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
@@ -23,18 +25,22 @@ public class DatabaseContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>().HasMany(u => u.Periods);
-
+     
         builder.Entity<Activity>().HasOne(p => p.Period);
-        //builder.Entity<Activity>().HasOne(p => p.Place);
+        builder.Entity<Activity>().HasOne(p => p.Place);
 
         builder.Entity<Period>().HasOne(p => p.Place);
-       
-
         //builder.Entity<Period>().HasOne(p => p.Creator);
-        /*
-        builder.Entity<Period>().HasMany(p => p.ListUser);
-       
-        */
+
+        builder.Entity<User>().HasMany(u => u.Periods)
+            .WithMany(a => a.ListUser);
+
+
+
+
+
+
+
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace VacancyProAPI.Models.DbModels
 {
@@ -16,11 +17,12 @@ namespace VacancyProAPI.Models.DbModels
         public DateTime EndDate { get; set; }
         [Required]
         public Place Place { get; set; } = null!;
-
-     
-
-        //public User Creator { get; set; } = null!;
-        //public IEnumerable<User> ListUser { get; set; } = null!;
+        
+        //[Required]
+        //public User Creator { get; set; }
+        
+       
+        public  List<User> ListUser { get; set; } = new();
        
 
         public Period() {}
@@ -31,9 +33,8 @@ namespace VacancyProAPI.Models.DbModels
             Description = description;
             BeginDate = beginDate;
             EndDate = endDate;
-            //Creator = creator;
             Place = place;
-            //ListUser = new HashSet<User>();
+           
         }
     }
 }

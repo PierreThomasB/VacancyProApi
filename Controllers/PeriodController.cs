@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Models.ViewModels;
 
 namespace VacancyProAPI.Controllers;
 
@@ -10,6 +14,8 @@ namespace VacancyProAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 public class PeriodController : ControllerBase
 {
 
@@ -23,14 +29,21 @@ public class PeriodController : ControllerBase
     }
 
 
-    [HttpGet("AllPeriods")]
+    [HttpGet("PeriodByUser")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
 
-    public async Task<ActionResult<IEnumerable<Period>>> GetAllVacances()
+
+    public async Task<ActionResult<IEnumerable<Period>>> GetPeriodByUser(string userId)
     {
         return Ok(await _context.Periods.Include(e  => e.Place).ToListAsync());
     }
 
     [HttpGet("{id}")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "La période de vacances n'existe pas", typeof(ErrorViewModel))]
+
+
     public async Task<ActionResult<Period>> GetVacances(int id)
     {
         var result = await this._context.Periods.FindAsync(id);
@@ -45,28 +58,27 @@ public class PeriodController : ControllerBase
 
 
     [HttpPost("NewVacances")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+
     public async Task<IActionResult> Post([FromBody] Period p)
     {
 
 
         Place place = await _placeController.AddPlace(p.Place);
-       
-        
         
         Period vacancesObj = new Period();
+
+        //var user = await _context.Users.FindAsync(p.ListUser[0].Id);
 
 
         vacancesObj.Name = p.Name;
         vacancesObj.Description = p.Description;
         vacancesObj.BeginDate = p.BeginDate;
         vacancesObj.EndDate = p.EndDate;
-       // vacancesObj.Creator = p.Creator;
+        //vacancesObj.ListUser = new () {user};
         vacancesObj.Place = place;
-       // vacancesObj.ListUser = new HashSet<User>();
-        //vacancesObj.ListActivity = new List<Activity>();
-       
-        
-        
+
         _context.Periods.Add(vacancesObj);
         await _context.SaveChangesAsync();
 
@@ -77,11 +89,10 @@ public class PeriodController : ControllerBase
 
    
     [HttpDelete("Delete")]
-
-    public async Task<IActionResult> DeleteVacances(string id)
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    public async Task<IActionResult> DeleteVacances(int id)
     {
-        
-        
         if (await this._context.Periods.FindAsync(id) == null)
         {
             return BadRequest("L'id des vacances n'a pas été trouvé");
@@ -92,6 +103,27 @@ public class PeriodController : ControllerBase
             _context.Periods.Remove(vacances);
             await _context.SaveChangesAsync();
             return Ok("Les vacances ont bien été supprimé ");
+        }
+
+       
+    }
+    
+    
+    [HttpPut("AddUser")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    public async Task<IActionResult> AddUser(User user, int period)
+    {
+        Period result = (await this._context.Periods.FindAsync(period))!;
+        
+        if (result == null)
+        {
+            return BadRequest("L'id des vacances n'a pas été trouvé");
+        }
+        else
+        {
+            //result.ListUser.Add(user);
+            await _context.SaveChangesAsync();
+            return Ok("La personne à bien été ajoutée");
         }
 
        

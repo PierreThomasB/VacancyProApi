@@ -12,22 +12,6 @@ namespace VacancyProAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AnonymUsers",
-                columns: table => new
-                {
-                    IdAnonym = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Sujet = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsResolve = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AnonymUsers", x => x.IdAnonym);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -64,6 +48,21 @@ namespace VacancyProAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Channel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,17 +194,11 @@ namespace VacancyProAPI.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BeginDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PlaceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    PlaceId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Periods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Periods_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Periods_Places_PlaceId",
                         column: x => x.PlaceId,
@@ -241,6 +234,30 @@ namespace VacancyProAPI.Migrations
                         column: x => x.PlaceId,
                         principalTable: "Places",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PeriodUser",
+                columns: table => new
+                {
+                    ListUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PeriodsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PeriodUser", x => new { x.ListUserId, x.PeriodsId });
+                    table.ForeignKey(
+                        name: "FK_PeriodUser_AspNetUsers_ListUserId",
+                        column: x => x.ListUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PeriodUser_Periods_PeriodsId",
+                        column: x => x.PeriodsId,
+                        principalTable: "Periods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -298,9 +315,9 @@ namespace VacancyProAPI.Migrations
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Periods_UserId",
-                table: "Periods",
-                column: "UserId");
+                name: "IX_PeriodUser_PeriodsId",
+                table: "PeriodUser",
+                column: "PeriodsId");
         }
 
         /// <inheritdoc />
@@ -308,9 +325,6 @@ namespace VacancyProAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Activities");
-
-            migrationBuilder.DropTable(
-                name: "AnonymUsers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -328,13 +342,19 @@ namespace VacancyProAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Periods");
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "PeriodUser");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Periods");
 
             migrationBuilder.DropTable(
                 name: "Places");
