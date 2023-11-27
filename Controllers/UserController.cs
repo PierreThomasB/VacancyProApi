@@ -91,7 +91,6 @@ namespace VacancyProAPI.Controllers
         [HttpPost("InVacation")]
         [Produces("application/json")]
         [SwaggerOperation(Summary = "Récupère la liste des utilisateurs en vacances")]
-        [SwaggerResponse(StatusCodes.Status200OK, "La liste des utilisateurs en vacances a bien été récupérée", typeof(Dictionary<string, int>))]
         public async Task<ActionResult<Dictionary<string, int>>> GetCountUsersByPlaces(DateDto request)
         {
             if (!ModelState.IsValid)
@@ -105,7 +104,16 @@ namespace VacancyProAPI.Controllers
                 .ToListAsync();
             foreach (var period in activePeriods)
             {
-                result.Add(period.Place!.Name.Split(",").Last().Trim(), 1);
+                var periodName = period.Place!.Name.Split(",").Last().Trim();
+                var number = 1; /*_context.PeriodUser.Count(pu => pu.PeriodId == period.Id);*/
+                if (result.ContainsKey(periodName))
+                {
+                    result[periodName] += number;
+                }
+                else
+                {
+                    result.Add(periodName, number);
+                }
             }
             return Ok(result);
         }
