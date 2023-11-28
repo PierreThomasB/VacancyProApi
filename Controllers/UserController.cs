@@ -64,24 +64,30 @@ namespace VacancyProAPI.Controllers
         }
 
         /// <summary>
-        /// Route (GET) qui permet de récupérer les utilisateurs de l'application
+        /// Route (GET) qui permet de récupérer les utilisateurs de l'application qui ne sont pas dans la période données 
         /// </summary>
         /// <returns>Une liste d'utilisateur transformées en ViewModel</returns>
         [HttpGet("ListUser")]
         [Produces("application/json")]
-        [SwaggerOperation(Summary = "Récupère la liste des utilisateurs de l'application")]
+        [SwaggerOperation(Summary = "Récupère la liste des utilisateurs de l'application qui ne sont pas dans la période données")]
         [SwaggerResponse(StatusCodes.Status200OK, "La liste des utilisateurs a bien été récupérée", typeof(List<UserViewModel>))]
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
-        public async Task<ActionResult<List<UserViewModel>>> GetUsers()
+        public async Task<ActionResult<List<UserViewModel>>> GetUsers(int periodId)
         {
-            var users = await _context.Users.ToListAsync();
-
+            var users =  await _context.Users.Include(p => p.Periods).ToListAsync();
             var userViewModels = new List<UserViewModel>();
-
+            Period period = await _context.Periods.FindAsync(periodId);
+            if (period == null)
+            {
+                return BadRequest("L'id de la période n'est pas correct");
+            }
             foreach (var user in users)
             {
-                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-                userViewModels.Add(new UserViewModel(user,isAdmin,"nothing to see here"));
+                if (!user.Periods.Contains(period))
+                {
+                    var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                    userViewModels.Add(new UserViewModel(user, isAdmin, "nothing to see here"));
+                }
             }
 
             return Ok(userViewModels);
@@ -216,15 +222,7 @@ namespace VacancyProAPI.Controllers
             
         }
         
-        [HttpGet("SuggestionUser")]
-        [SwaggerResponse(StatusCodes.Status200OK, "L'utilisateur a été trouvé", typeof(SuccessViewModel))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations fournies sont invalide", typeof(ErrorViewModel))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas", typeof(ErrorViewModel))]
-        public async Task<ActionResult<UserViewModel>> SuggestUser(string username)
-        {
-            var result =  _context.Users.Where(r => r.UserName == username);
-            return Ok(result);
-        }
+       
         
         /// <summary>
         /// Route (PUT) qui permet de modifier le nom d'utilisateur de l'utilisateur connecté

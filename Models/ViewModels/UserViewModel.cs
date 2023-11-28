@@ -20,6 +20,7 @@ namespace VacancyProAPI.Models.ViewModels
             this.Email = user.Email;
             this.Token = token;
             IsAdmin = isAdmin;
+            Periods = user.Periods;
         }
     }
 }
