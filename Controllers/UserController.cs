@@ -13,6 +13,7 @@ using VacancyProAPI.Models.Mails;
 using VacancyProAPI.Models.ViewModels;
 using VacancyProAPI.Services.MailService;
 using VacancyProAPI.Services.UserService;
+using DateDto = VacancyProAPI.Models.DTOs.DateDto;
 
 namespace VacancyProAPI.Controllers
 {
@@ -91,6 +92,36 @@ namespace VacancyProAPI.Controllers
             }
 
             return Ok(userViewModels);
+        }
+        [AllowAnonymous]
+        [HttpPost("InVacation")]
+        [Produces("application/json")]
+        [SwaggerOperation(Summary = "Récupère la liste des utilisateurs en vacances")]
+        public async Task<ActionResult<Dictionary<string, int>>> GetCountUsersByPlaces(DateDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorViewModel("Données invalides"));
+            }
+            Dictionary<string, int> result = new Dictionary<string, int>();
+            var activePeriods = await _context.Periods
+                .Include(p => p.Place)
+                .Include(p => p.ListUser)
+                .Where(p => p.BeginDate <= request.Date && request.Date <= p.EndDate)
+                .ToListAsync();
+            foreach (var period in activePeriods)
+            {
+                var periodName = period.Place!.Name.Split(",").Last().Trim();
+                if (result.ContainsKey(periodName))
+                {
+                    result[periodName] += period.ListUser.Count;
+                }
+                else
+                {
+                    result.Add(periodName, period.ListUser.Count);
+                }
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -171,19 +202,10 @@ namespace VacancyProAPI.Controllers
             }
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-            
-           
-
-            /*
-            user.Periods = _context.Periods.Where(p => p.Creator.Id == user.Id)
-                /*
-                .Include(p => p.ListActivity).ThenInclude(a => a.Place)
-                .Include(p => p.Place)
-                //.Include(p => p.PeriodPlace.Id == _context.PeriodPlaces.First(place => place.Id == p.PeriodPlace.Id).Id)
-                .Include(p => p.ListUser)
-                
-                .ToList();
-            */
+            user = _context.Users
+                .Include(u => u.Periods)
+                .ThenInclude(p => p.Place)
+                .FirstOrDefault(u => u.Id == user.Id);
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }
@@ -212,7 +234,10 @@ namespace VacancyProAPI.Controllers
                 var user = _userManager.FindByEmailAsync(payload.Email).Result;
                 if (user == null) return NotFound(new ErrorViewModel(payload.Email));
                 var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-              
+                user = _context.Users
+                    .Include(u => u.Periods)
+                    .ThenInclude(p => p.Place)
+                    .FirstOrDefault(u => u.Id == user.Id);
                 return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
             }
             catch (Exception)

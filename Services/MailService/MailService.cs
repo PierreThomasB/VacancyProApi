@@ -13,7 +13,7 @@ public class MailService : IMailService
         _configuration = configuration;
     }
 
-    public void SendMail(DefaultMail defaultMail)
+    public async void SendMail(DefaultMail defaultMail)
     {
         var mail = new MimeMessage();
         mail.From.Add(MailboxAddress.Parse(defaultMail.From ?? _configuration["MailSettings:ServerFrom"]));
@@ -21,17 +21,17 @@ public class MailService : IMailService
         mail.Subject = defaultMail.Subject;
         mail.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = defaultMail.GetMailBody() };
 
-        /*var bodyBuilder = new BodyBuilder();
+        var bodyBuilder = new BodyBuilder();
         bodyBuilder.TextBody = defaultMail.GetMailBody();
         mail.Body = bodyBuilder.ToMessageBody();
-        using (var smtp = new SmtpClient())
-        {
-            smtp.Connect(_configuration["MailSettings:ServerName"],
-                int.Parse(_configuration["MailSettings:ServerPort"]!), MailKit.Security.SecureSocketOptions.None);
-            smtp.Send(mail);
-            smtp.Disconnect(true);
-        }*/
-        new Thread(() =>
+        
+        using var smtp = new SmtpClient();
+        smtp.Connect(_configuration["MailSettings:ServerName"],
+            int.Parse(_configuration["MailSettings:ServerPort"]!),
+            MailKit.Security.SecureSocketOptions.None);
+        await smtp.SendAsync(mail);
+        smtp.Disconnect(true);
+        /*new Thread(() =>
         {
             var smtp = new SmtpClient();
             try
@@ -48,6 +48,6 @@ public class MailService : IMailService
             {
                 smtp.Disconnect(true);
             }
-        });
+        });*/
     }
 }

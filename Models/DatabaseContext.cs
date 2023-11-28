@@ -13,7 +13,6 @@ public class DatabaseContext : IdentityDbContext<User>
     
     public DbSet<Place> Places { get; set; }
     
-    
     public DbSet<Chat> Messages { get; set; }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
@@ -25,7 +24,7 @@ public class DatabaseContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
-     
+        //builder.Entity<PeriodUser>().HasNoKey();
         builder.Entity<Activity>().HasOne(p => p.Period);
         builder.Entity<Activity>().HasOne(p => p.Place);
 
