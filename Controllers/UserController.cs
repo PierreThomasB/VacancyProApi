@@ -100,19 +100,19 @@ namespace VacancyProAPI.Controllers
             Dictionary<string, int> result = new Dictionary<string, int>();
             var activePeriods = await _context.Periods
                 .Include(p => p.Place)
+                .Include(p => p.ListUser)
                 .Where(p => p.BeginDate <= request.Date && request.Date <= p.EndDate)
                 .ToListAsync();
             foreach (var period in activePeriods)
             {
                 var periodName = period.Place!.Name.Split(",").Last().Trim();
-                var number = 1; /*_context.PeriodUser.Count(pu => pu.PeriodId == period.Id);*/
                 if (result.ContainsKey(periodName))
                 {
-                    result[periodName] += number;
+                    result[periodName] += period.ListUser.Count;
                 }
                 else
                 {
-                    result.Add(periodName, number);
+                    result.Add(periodName, period.ListUser.Count);
                 }
             }
             return Ok(result);
@@ -196,19 +196,10 @@ namespace VacancyProAPI.Controllers
             }
 
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-            
-           
-
-            /*
-            user.Periods = _context.Periods.Where(p => p.Creator.Id == user.Id)
-                /*
-                .Include(p => p.ListActivity).ThenInclude(a => a.Place)
-                .Include(p => p.Place)
-                //.Include(p => p.PeriodPlace.Id == _context.PeriodPlaces.First(place => place.Id == p.PeriodPlace.Id).Id)
-                .Include(p => p.ListUser)
-                
-                .ToList();
-            */
+            user = _context.Users
+                .Include(u => u.Periods)
+                .ThenInclude(p => p.Place)
+                .FirstOrDefault(u => u.Id == user.Id);
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }
@@ -237,7 +228,10 @@ namespace VacancyProAPI.Controllers
                 var user = _userManager.FindByEmailAsync(payload.Email).Result;
                 if (user == null) return NotFound(new ErrorViewModel(payload.Email));
                 var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-              
+                user = _context.Users
+                    .Include(u => u.Periods)
+                    .ThenInclude(p => p.Place)
+                    .FirstOrDefault(u => u.Id == user.Id);
                 return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
             }
             catch (Exception)

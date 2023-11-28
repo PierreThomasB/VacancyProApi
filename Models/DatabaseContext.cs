@@ -13,8 +13,6 @@ public class DatabaseContext : IdentityDbContext<User>
     
     public DbSet<Place> Places { get; set; }
     
-    //public DbSet<PeriodUser> PeriodUser { get; set; }
-    
     public DbSet<Chat> Messages { get; set; }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
