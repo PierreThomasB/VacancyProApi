@@ -6,6 +6,7 @@ namespace VacancyProAPI.Models.DbModels
     {
 
         public List<Period> Periods = new();
+        public List<Notification> Notifications = new();
         public bool Equals(User? x, User? y)
         {
             if (x == null || y == null)return false;

@@ -14,6 +14,8 @@ public class DatabaseContext : IdentityDbContext<User>
     public DbSet<Place> Places { get; set; }
     
     public DbSet<Chat> Messages { get; set; }
+    
+    public DbSet<Notification> Notifications { get; set; }
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)

@@ -47,11 +47,32 @@ public class ChatController : ControllerBase
     [HttpPost("NewMessage")]
     public async Task<ActionResult> PostNewMessage([FromBody]Chat chat)
     {
+        Check100Message();
          _context.Messages.Add(chat);
         await _pusher.TriggerAsync(chat.Channel, "my-event", new { chat.Date , chat.Message });
         await _context.SaveChangesAsync();
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
+    }
+
+
+    private async void Check100Message()
+    {
+        var messages =  _context.Messages.OrderByDescending(m => m.Date);
+        int count = _context.Messages.Count();
+        if (count > 100)
+        {
+            foreach (var message in messages)
+            {
+                _context.Messages.Remove(message);
+                count--;
+                if (count < 100)
+                {
+                    break;
+                }
+            }
+        }
+        await  _context.SaveChangesAsync();
     }
 
 
