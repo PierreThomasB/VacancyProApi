@@ -70,7 +70,7 @@ public class ChatController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide", typeof(ErrorViewModel))]
     public async Task<ActionResult> GetAllMessage(string channel)
     {
-        var values =  _context.Messages.Where(a => a.Channel == channel);
+        var values =  _context.Messages.Where(a => a.Channel == channel).OrderBy(m => m.Date);
 
         return Ok(values);
 
