@@ -48,7 +48,7 @@ public class ChatController : ControllerBase
     public async Task<ActionResult> PostNewMessage([FromBody]Chat chat)
     {
          _context.Messages.Add(chat);
-        await _pusher.TriggerAsync(chat.Channel, "my-event", new { chat.Message });
+        await _pusher.TriggerAsync(chat.Channel, "my-event", new { chat.Date , chat.Message });
         await _context.SaveChangesAsync();
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
