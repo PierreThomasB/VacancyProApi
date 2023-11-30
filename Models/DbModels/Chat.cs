@@ -13,6 +13,8 @@ public class Chat
     [Required] public string Channel { get; set; } = null!;
     
     [Required] public DateTime Date { get; set; }
+    
+    [Required] public User User { get; set; } 
 
 
     public Chat()

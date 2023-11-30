@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 
@@ -8,6 +11,8 @@ namespace VacancyProAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 public class ActivityController : ControllerBase
 {
     private readonly DatabaseContext _context;
@@ -20,13 +25,7 @@ public class ActivityController : ControllerBase
     }
     
     
-    
-    [HttpGet("AllActivity")]
-    public async Task<ActionResult<IEnumerable<Activity>>> GetAllActivite()
-    {
-        var val = await _context.Activities.ToListAsync();
-        return  Ok(val);
-    }
+ 
 
 
     [HttpPost("NewActivity")]
@@ -58,18 +57,17 @@ public class ActivityController : ControllerBase
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activiteObj);
     }
 
-
-
-
-
+    
     [HttpGet("ActivityByPeriod")]
-    public async Task<ActionResult<Activity>> ActivitiesByPeriodId(int? id)
+    public async Task<ActionResult<Activity>> ActivitiesByPeriodId(int id)
     {
-        if (!id.HasValue)
+        if (id == null)
         {
             return  BadRequest("L'id ne peux être nul");
         }
-        var result =  _context.Activities.Include(p => p.Place).Include(pl => pl.Period).Where(a => a.Id == id);
+
+        var period = await _context.Periods.FindAsync(id);
+        var result =  _context.Activities.Include(p => p.Place).Include(pl => pl.Period).Where(a => a.Period == period);
         return Ok(result);
     }
     
@@ -84,26 +82,4 @@ public class ActivityController : ControllerBase
 
         return Ok(result);
     }
-
-    
-    
-
-    
-    /*
-    [HttpGet("GetByVacances")]
-    public async Task<ActionResult<Activity>> GetActiviteByVacances(int idVacances)
-    {
-        if (await  _context.Periods.FindAsync(idVacances) != null)
-        {
-            Period vacances = (await _context.Periods.FindAsync(idVacances))!;
-            return Ok(vacances.ListActivity);
-        }
-
-        return NotFound("L'id de la Vacances n'a pas été trouvé ");
-    }
-    
-    
-    */
-    
-    
 }
