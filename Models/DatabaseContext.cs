@@ -27,10 +27,10 @@ public class DatabaseContext : IdentityDbContext<User>
         base.OnModelCreating(builder);
 
         //builder.Entity<PeriodUser>().HasNoKey();
-        builder.Entity<Activity>().HasOne(p => p.Period);
-        builder.Entity<Activity>().HasOne(p => p.Place);
+        //builder.Entity<Activity>().HasOne(p => p.Period);
+        //builder.Entity<Activity>().HasOne(p => p.Place);
 
-        builder.Entity<Period>().HasOne(p => p.Place);
+        //builder.Entity<Period>().HasOne(p => p.Place);
         //builder.Entity<Period>().HasOne(p => p.Creator);
 
         builder.Entity<User>().HasMany(u => u.Periods)

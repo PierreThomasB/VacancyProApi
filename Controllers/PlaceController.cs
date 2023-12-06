@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,6 +10,8 @@ using VacancyProAPI.Models.DbModels;
 namespace VacancyProAPI.Controllers;
 
 
+[ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PlaceController 
 {
     private readonly DatabaseContext _context;
@@ -21,6 +25,7 @@ public class PlaceController
 
 
 
+    [HttpPost("NewPlace")]
     public async Task<Place> AddPlace(Place placeObj)
     {
         if (await _context.Places.FindAsync(placeObj.Id) == null)

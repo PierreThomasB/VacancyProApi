@@ -21,7 +21,7 @@ public class ActivityController : ControllerBase
     public ActivityController(DatabaseContext context)
     {
         _context = context;
-        this._placeController = new PlaceController(context);
+        _placeController = new PlaceController(context);
     }
     
     
@@ -29,36 +29,30 @@ public class ActivityController : ControllerBase
 
 
     [HttpPost("NewActivity")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+
     public async Task<IActionResult> Post([FromBody] Activity activity)
     {
+        string formatedDateBegin = activity.BeginDate.ToString("yyyy-MM-dd HH:mm:ss");
+        string formatedDateEnd = activity.EndDate.ToString("yyyy-MM-dd HH:mm:ss");
         Place place  = await _placeController.AddPlace(activity.Place);
-        Period? period = (await _context.Periods.FindAsync(activity.Period.Id));
-        if (period == null)
-        {
-            return BadRequest("La période ne peux etre nule ");
-        }
+        string sqlRaw = "INSERT INTO Activities (Name , Description ,BeginDate,EndDate,PlaceId,PeriodId) VALUES ('" +
+                        activity.Name +
+                        "','" + activity.Description + "','" + formatedDateBegin + "','" + formatedDateEnd + "','" +
+                        place.Id +
+                        "'," + activity.Period.Id + ")";
         
-        
-        Activity activiteObj = new Activity();
-
-        activiteObj.Name = activity.Name;
-        activiteObj.Description = activity.Description;
-        activiteObj.Place = place;
-        activiteObj.BeginDate = activity.BeginDate;
-        activiteObj.EndDate = activity.EndDate;
-        activiteObj.Period = period!;
-        
-        
-        _context.Activities.Add(activiteObj);
-        _context.Periods.Update(period);
-        
+         _context.Database.ExecuteSqlRaw(sqlRaw);
         await _context.SaveChangesAsync();
         
-        return CreatedAtAction("GetActivity", new { id = activity.Id }, activiteObj);
+        return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
 
     
     [HttpGet("ActivityByPeriod")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+
     public async Task<ActionResult<Activity>> ActivitiesByPeriodId(int id)
     {
         if (id == null)

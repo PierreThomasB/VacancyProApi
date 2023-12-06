@@ -8,7 +8,13 @@ public class Notification
     public int Id { get; set; }
     [Required]
     
-    public User user { get; set; }
+    public User User { get; set; }
+    
+    [Required] public string Contenu { get; set; } = string.Empty;
 
-    [Required] public string contenu { get; set; } = string.Empty;
+    public DateTime Date { get; set; } 
+
+    public Notification()
+    {
+    }
 }
