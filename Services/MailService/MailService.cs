@@ -20,10 +20,6 @@ public class MailService : IMailService
         mail.To.Add(MailboxAddress.Parse(defaultMail.To ?? _configuration["MailSettings:ServerAdmin"]));
         mail.Subject = defaultMail.Subject;
         mail.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = defaultMail.GetMailBody() };
-
-        var bodyBuilder = new BodyBuilder();
-        bodyBuilder.TextBody = defaultMail.GetMailBody();
-        mail.Body = bodyBuilder.ToMessageBody();
         
         using var smtp = new SmtpClient();
         smtp.Connect(_configuration["MailSettings:ServerName"],

@@ -32,10 +32,10 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 });
 builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
 {
-    builder.WithOrigins("http://localhost:3000", "https://panoramix.cg.helmo.be/~q200007").WithMethods("GET", "PUT", "DELETE", "POST").AllowAnyHeader().AllowCredentials();
+    builder.WithOrigins("http://localhost:3000", "https://panoramix.cg.helmo.be").WithMethods("GET", "PUT", "DELETE", "POST").AllowAnyHeader().AllowCredentials();
 }));
 builder.Services.AddSignalR();
-var connectionString = configuration.GetConnectionString("PierreDb");
+var connectionString = configuration.GetConnectionString("default");
 
 
 builder.Services.AddControllersWithViews();
@@ -75,11 +75,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.AddConsole(); 
-});
-
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile("./firebase.json"),
 });
 
 var app = builder.Build();
