@@ -29,21 +29,16 @@ public class NotificationController : ControllerBase
     }
     
     
-    [HttpPost("NotificationToUser")]
-    public async Task<ActionResult> PostNewMessage([FromBody]Notification notification)
-    {
-        await _context.AddAsync(notification);
-        return Ok();
-    }
     
-    [HttpGet("NotificationfromUser")]
+    [HttpGet("NotificationFromUser")]
     public  async Task<ActionResult<List<Notification>>> GetUserNotification()
     {
         string userId = _userService.GetUserIdFromToken()!;
-        var result =  _context.Users.Include(a => a.Notifications).First(u => u.Id == userId);
+        var user = await _context.Users.FindAsync(userId);
+        var result = await _context.Notifications.Where(u => u.User == user).ToListAsync();
         
 
-        return Ok(new NotificationViewModel( result.Notifications.Count , result.Notifications ));
+        return Ok(result);
 
     }
     

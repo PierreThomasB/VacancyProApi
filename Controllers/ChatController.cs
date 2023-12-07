@@ -2,12 +2,15 @@
 using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PusherServer;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 using VacancyProAPI.Models.ViewModels;
+using VacancyProAPI.Services.UserService;
 
 namespace VacancyProAPI.Controllers;
 
@@ -23,11 +26,14 @@ public class ChatController : ControllerBase
 
     private readonly Pusher _pusher;
     private readonly DatabaseContext _context;
- 
+    private readonly IUserService _userService;
 
-    public ChatController(DatabaseContext context , ILogger<ChatController> logger)
+
+    public ChatController(DatabaseContext context , ILogger<ChatController> logger, UserManager<User> userManager, IUserService userService)
     {
         this._context = context;
+        _userService = userService;
+
         var options = new PusherOptions
         {
             Cluster = "eu",
@@ -48,8 +54,12 @@ public class ChatController : ControllerBase
     public async Task<ActionResult> PostNewMessage([FromBody]Chat chat)
     {
         Check100Message();
+        string userId = _userService.GetUserIdFromToken()!;
+        var user = await _context.Users.FindAsync(userId);
+        chat.User = user;
+        
          _context.Messages.Add(chat);
-        await _pusher.TriggerAsync(chat.Channel, "my-event", new { chat.Date , chat.Message });
+        await _pusher.TriggerAsync(chat.Channel, "my-event", new { Date = chat.Date ,Message =  chat.Message  , User = user});
         await _context.SaveChangesAsync();
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
@@ -91,7 +101,7 @@ public class ChatController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide", typeof(ErrorViewModel))]
     public async Task<ActionResult> GetAllMessage(string channel)
     {
-        var values =  _context.Messages.Where(a => a.Channel == channel).OrderBy(m => m.Date);
+        var values =  _context.Messages.Include(m => m.User).Where(a => a.Channel == channel).OrderBy(m => m.Date);
 
         return Ok(values);
 

@@ -142,7 +142,7 @@ public class PeriodController : ControllerBase
     public async Task<IActionResult> AddUser(string userId, int period)
     {
         Period result = (await _context.Periods.FindAsync(period))!;
-        User user = await _context.Users.FindAsync(userId);
+        User user = (await _context.Users.FindAsync(userId))!;
         
         if (result == null || user == null)
         {
@@ -150,11 +150,24 @@ public class PeriodController : ControllerBase
         }
         else
         {
+            
+           
             result.ListUser.Add(user);
+            AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances ");
             await _context.SaveChangesAsync();
             return Ok("La personne à bien été ajoutée");
         }
 
        
+    }
+
+    private void AddNotif(User user, string contenu)
+    {
+        Notification notification = new Notification();
+        notification.User = user;
+        notification.Contenu = contenu;
+        notification.Date = DateTime.Now;
+        _context.Notifications.Add(notification);
+
     }
 }
