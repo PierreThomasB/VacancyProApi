@@ -32,7 +32,7 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 });
 builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
 {
-    builder.WithOrigins(configuration.GetSection("CorsURL")!.Value!).WithMethods("GET", "PUT", "DELETE", "POST").AllowAnyHeader().AllowCredentials();
+    builder.WithOrigins("http://localhost:3000", "https://panoramix.cg.helmo.be/~q200007").WithMethods("GET", "PUT", "DELETE", "POST").AllowAnyHeader().AllowCredentials();
 }));
 builder.Services.AddSignalR();
 var connectionString = configuration.GetConnectionString("PierreDb");
