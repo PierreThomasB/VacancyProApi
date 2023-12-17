@@ -63,8 +63,8 @@ public class ChatController : ControllerBase
         var user = await _context.Users.FindAsync(userId);
         chat.User = user;
          _context.Messages.Add(chat);
-        await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , User = user});
         await _context.SaveChangesAsync();
+        await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , User = user});
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
     }
