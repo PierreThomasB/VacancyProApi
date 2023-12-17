@@ -51,15 +51,19 @@ public class ChatController : ControllerBase
 
 
     [HttpPost("NewMessage")]
+    [Produces("application/json")]
+    [SwaggerOperation(Summary = "Permet d'envoyer un message sur un channel spécifique")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Message envoyé ")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations sont invalide")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas")]
     public async Task<ActionResult> PostNewMessage([FromBody]Chat chat)
     {
         Check100Message();
         string userId = _userService.GetUserIdFromToken()!;
         var user = await _context.Users.FindAsync(userId);
         chat.User = user;
-        
          _context.Messages.Add(chat);
-        await _pusher.TriggerAsync(chat.Channel, "my-event", new { Date = chat.Date ,Message =  chat.Message  , User = user});
+        await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , User = user});
         await _context.SaveChangesAsync();
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
@@ -98,7 +102,7 @@ public class ChatController : ControllerBase
     [HttpGet("AllMessage")]
     [Produces("application/json")]
     [SwaggerOperation(Summary = "Permet de recupérer les messages d'un channel")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide", typeof(ErrorViewModel))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide")]
     public async Task<ActionResult> GetAllMessage(string channel)
     {
         var values =  _context.Messages.Include(m => m.User).Where(a => a.Channel == channel).OrderBy(m => m.Date);
