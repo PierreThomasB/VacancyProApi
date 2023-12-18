@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
 using VacancyProAPI.Models.ViewModels;
+using VacancyProAPI.Services.UserService;
 
 namespace VacancyProAPI.Controllers;
 
@@ -19,12 +21,15 @@ public class ActivityController : ControllerBase
     private readonly DatabaseContext _context;
     private readonly PlaceController _placeController;
     private readonly ILogger<ActivityController> _logger;
+    private readonly IUserService _userService;
 
-    public ActivityController(DatabaseContext context , ILogger<ActivityController> logger)
+    public ActivityController(DatabaseContext context , ILogger<ActivityController> logger , IUserService userService )
     {
         _context = context;
         _placeController = new PlaceController(context);
-        logger = _logger;
+       _logger = logger;
+       _userService = userService;
+       
     }
     
     
@@ -97,5 +102,36 @@ public class ActivityController : ControllerBase
         }
 
         return Ok(result);
+    }
+    
+    [HttpDelete("{id}")]
+    [Produces("application/json")]
+    [SwaggerOperation(Summary = "Supprime l'activitée avec l'id correspondant  ")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    public async Task<ActionResult<Activity>> DeleteActivity(int id)
+    {
+        string userId =  _userService.GetUserIdFromToken()!;
+        User? user =  _context.Users.Include(p => p.Periods).First( u => u.Id == userId);
+        
+        Activity? activity =  _context.Activities.Include(a => a.Period).First(a => a.Id == id);
+        if (activity == null || user == null)
+        {
+            _logger.Log(LogLevel.Warning , "Erreur dans la suppression d'une activitée ");
+            return NotFound("L'id n'a pas été trouvé");
+        }
+        int periodId = activity.Period.Id;
+
+        foreach (var period in user.Periods)
+        {
+            if (period.Id == periodId)
+            {
+                _context.Activities.Remove(activity);
+                await _context.SaveChangesAsync();
+                _logger.Log(LogLevel.Information , "Activitée supprimé avec succès");
+                return Ok(activity);
+            }
+        }
+        _logger.Log(LogLevel.Warning , "Erreur dans la suppression d'une activitée ");
+        return BadRequest("Vous n'avez pas les droits pour supprimer cette activitée");
     }
 }
