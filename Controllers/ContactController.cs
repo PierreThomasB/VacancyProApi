@@ -16,7 +16,7 @@ namespace VacancyProAPI.Controllers
     /// Controller qui permet de contacter l'équipe d'administration du site
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ContactController : ControllerBase
     {
