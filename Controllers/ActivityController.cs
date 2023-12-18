@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Models.ViewModels;
 
 namespace VacancyProAPI.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 public class ActivityController : ControllerBase
@@ -31,9 +32,11 @@ public class ActivityController : ControllerBase
     [HttpPost("NewActivity")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Crée une nouvelle activitée ")]
 
     public async Task<IActionResult> Post([FromBody] Activity activity)
     {
+        if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
         string formatedDateBegin = activity.BeginDate.ToString("yyyy-MM-dd HH:mm:ss");
         string formatedDateEnd = activity.EndDate.ToString("yyyy-MM-dd HH:mm:ss");
         Place place  = await _placeController.AddPlace(activity.Place);
@@ -51,21 +54,29 @@ public class ActivityController : ControllerBase
 
     
     [HttpGet("ActivityByPeriod")]
+    [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Retourne les activitée par période  ")]
 
     public async Task<ActionResult<Activity>> ActivitiesByPeriodId(int id)
     {
-        if (id == null)
+        if (!ModelState.IsValid)
         {
-            return  BadRequest("L'id ne peux être nul");
+            return BadRequest("Aucune valeur passée pour l'id ");
         }
-
         var period = await _context.Periods.FindAsync(id);
+        if (period == null)
+        {
+            return NotFound("La période correspondant à l'id n'a pas été trouvé ");
+        }
         var result =  _context.Activities.Include(p => p.Place).Include(pl => pl.Period).Where(a => a.Period == period);
         return Ok(result);
     }
     
     [HttpGet("{id}")]
+    [Produces("application/json")]
+    [SwaggerOperation(Summary = "Retourne l' activitée avec l'id correspondant  ")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     public async Task<ActionResult<Activity>> GetActivity(int id)
     {
         var result = await this._context.Activities.FindAsync(id);

@@ -10,14 +10,12 @@ using VacancyProAPI.Models.DbModels;
 namespace VacancyProAPI.Controllers;
 
 
-[ApiController]
+
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PlaceController 
 {
     private readonly DatabaseContext _context;
     
-
-
     public PlaceController(DatabaseContext context) 
     {
         this._context = context;
@@ -25,8 +23,8 @@ public class PlaceController
 
 
 
-    [HttpPost("NewPlace")]
-    public async Task<Place> AddPlace(Place placeObj)
+    
+    protected internal async Task<Place> AddPlace(Place placeObj)
     {
         if (await _context.Places.FindAsync(placeObj.Id) == null)
         {

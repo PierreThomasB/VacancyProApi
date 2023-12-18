@@ -15,7 +15,7 @@ namespace VacancyProAPI.Controllers;
 /// Controller qui permet de gérer les périodes de vacances
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 public class PeriodController : ControllerBase
@@ -40,6 +40,8 @@ public class PeriodController : ControllerBase
     [HttpGet("PeriodByUser")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Permet de récupérer les periodes d'un utilisateur ")]
+
     public async Task<ActionResult> GetPeriodByUser()
     {
         var userId =  _userService.GetUserIdFromToken()!;
@@ -80,10 +82,16 @@ public class PeriodController : ControllerBase
     [HttpPost("NewVacances")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Permet de créer une nouvelle période ")]
+
 
     public async Task<IActionResult> Post([FromBody] Period p)
     {
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("La période n'est pas valide ");
+        }
 
         Place place = await _placeController.AddPlace(p.Place);
         
@@ -112,6 +120,8 @@ public class PeriodController : ControllerBase
     [HttpDelete("Delete")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Permet de supprimer une période  ")]
+
     public async Task<IActionResult> DeleteVacances(int id)
     {
         string userId =  _userService.GetUserIdFromToken()!;
@@ -119,26 +129,26 @@ public class PeriodController : ControllerBase
        
         if (await this._context.Periods.FindAsync(id) == null)
         {
-            return BadRequest("L'id des vacances n'a pas été trouvé");
+            return NotFound("L'id des vacances n'a pas été trouvé");
         }
-        else
-        {
-            Period vacances = (await _context.Periods.FindAsync(id))!;
-            if (!user.Periods.Contains(vacances))
-            {
-                return Unauthorized("Vous n'avez pas l'autorisation de supprimer cette periode de vacances");
-            }
-            _context.Periods.Remove(vacances);
-            await _context.SaveChangesAsync();
-            return Ok("Les vacances ont bien été supprimé ");
-        }
-
        
+        Period vacances = (await _context.Periods.FindAsync(id))!;
+        if (!user.Periods.Contains(vacances))
+        {
+            return Unauthorized("Vous n'avez pas l'autorisation de supprimer cette periode de vacances");
+        }
+        _context.Periods.Remove(vacances);
+        await _context.SaveChangesAsync();
+        return Ok("Les vacances ont bien été supprimé ");
     }
     
     
     [HttpPut("AddUser")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [Produces("application/json")]
+    [SwaggerOperation(Summary = "Permet d'ajouter un utilisateur à une période ")]
+
+
     public async Task<IActionResult> AddUser(string userId, int period)
     {
         Period result = (await _context.Periods.FindAsync(period))!;
@@ -148,17 +158,11 @@ public class PeriodController : ControllerBase
         {
             return BadRequest("L'id de l'utilisateur ou des vacances n'a pas été trouvé");
         }
-        else
-        {
-            
            
-            result.ListUser.Add(user);
-            AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances ");
-            await _context.SaveChangesAsync();
-            return Ok("La personne à bien été ajoutée");
-        }
-
-       
+        result.ListUser.Add(user);
+        AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances ");
+        await _context.SaveChangesAsync();
+        return Ok("La personne à bien été ajoutée");
     }
 
     private void AddNotif(User user, string contenu)

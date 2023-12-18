@@ -20,8 +20,7 @@ namespace VacancyProAPI.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private readonly DatabaseContext _context;
-        private readonly UserManager<User> _userManager;
+        
         private readonly IMailService _mailService;
         
         /// <summary>
@@ -31,10 +30,8 @@ namespace VacancyProAPI.Controllers
         /// <param name="userManager">Service permettant de gérer l'utilisateur connecté</param>
         /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         
-        public ContactController(DatabaseContext context, UserManager<User> userManager, IMailService mailService)
+        public ContactController( IMailService mailService)
         {
-            _context = context;
-            _userManager = userManager;
             _mailService = mailService;
         }
         

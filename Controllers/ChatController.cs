@@ -29,7 +29,9 @@ public class ChatController : ControllerBase
     private readonly IUserService _userService;
 
 
-    public ChatController(DatabaseContext context , ILogger<ChatController> logger, UserManager<User> userManager, IUserService userService)
+ 
+    public ChatController(DatabaseContext context, ILogger<ChatController> logger, UserManager<User> userManager,
+        IUserService userService)
     {
         this._context = context;
         _userService = userService;
@@ -45,7 +47,6 @@ public class ChatController : ControllerBase
             "74f1716b51dbbc6c19ca",
             "c3341eb1f00700d5711a",
             options);
-
     }
 
 
@@ -58,6 +59,10 @@ public class ChatController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "L'utilisateur n'existe pas")]
     public async Task<ActionResult> PostNewMessage([FromBody]Chat chat)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ErrorViewModel("Le format du message n'est pas correst "));
+        }
         Check100Message();
         string userId = _userService.GetUserIdFromToken()!;
         var user = await _context.Users.FindAsync(userId);
@@ -92,10 +97,20 @@ public class ChatController : ControllerBase
 
     [HttpGet("Message")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Permet de recupérer un message avec son id ")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide")]
 
     public async Task<ActionResult> GetMessage(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("L'id n'est pas correct");
+        }
         var values = await _context.Messages.FindAsync(id);
+        if (values == null)
+        {
+            return NotFound("Le message n'a pas été trouvé ");
+        }
         return Ok(values);
     }
     
@@ -105,6 +120,10 @@ public class ChatController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Le channel n'est pas valide")]
     public async Task<ActionResult> GetAllMessage(string channel)
     {
+        if (channel.Length == 0 )
+        {
+            return BadRequest("La valeur pour le channel n'est pas correcte ");
+        }
         var values =  _context.Messages.Include(m => m.User).Where(a => a.Channel == channel).OrderBy(m => m.Date);
 
         return Ok(values);

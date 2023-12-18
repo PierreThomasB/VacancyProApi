@@ -21,7 +21,7 @@ namespace VacancyProAPI.Controllers
     /// Controller qui permet de gérer les utilisateurs
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
