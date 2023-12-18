@@ -69,7 +69,13 @@ public class ChatController : ControllerBase
         }
         Check100Message();
         string userId = _userService.GetUserIdFromToken()!;
-        var user = await _context.Users.FindAsync(userId);
+        User? user = await _context.Users.FindAsync(userId);
+        if(user == null)
+        {
+            _logger.Log(LogLevel.Warning, "L'utilisateur n'a pas été trouvé ");
+            return NotFound(new ErrorViewModel("L'utilisateur n'a pas été trouvé "));
+        }
+        chat.UserName = user.UserName;
          _context.Messages.Add(chat);
         await _context.SaveChangesAsync();
         await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , UserName = user.UserName});

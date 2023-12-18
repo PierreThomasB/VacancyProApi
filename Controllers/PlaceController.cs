@@ -15,9 +15,10 @@ namespace VacancyProAPI.Controllers;
 public class PlaceController 
 {
     private readonly DatabaseContext _context;
-    
-    public PlaceController(DatabaseContext context) 
+
+    protected internal  PlaceController(DatabaseContext context ) 
     {
+      
         this._context = context;
     }
 
@@ -26,6 +27,7 @@ public class PlaceController
     
     protected internal async Task<Place> AddPlace(Place placeObj)
     {
+        
         if (await _context.Places.FindAsync(placeObj.Id) == null)
         {
             Place place = new Place

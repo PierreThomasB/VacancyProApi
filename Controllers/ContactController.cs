@@ -20,7 +20,7 @@ namespace VacancyProAPI.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        
+        private readonly Logger<ContactController> _logger;
         private readonly IMailService _mailService;
         
         /// <summary>
@@ -30,8 +30,9 @@ namespace VacancyProAPI.Controllers
         /// <param name="userManager">Service permettant de gérer l'utilisateur connecté</param>
         /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         
-        public ContactController( IMailService mailService)
+        public ContactController( IMailService mailService , Logger<ContactController> logger)
         {
+            _logger = logger;
             _mailService = mailService;
         }
         
@@ -42,11 +43,16 @@ namespace VacancyProAPI.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Les informations du formulaires ne sont pas valides", typeof(ErrorViewModel))]
         public async Task<ActionResult<SuccessViewModel>> Contact(ContactDto request)
         {
-            if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
+            if (!ModelState.IsValid)
+            {
+                _logger.Log(LogLevel.Warning , "Informations invalide");
+                return BadRequest(new ErrorViewModel("Informations invalide"));
+            }
             _mailService.SendMail(new ContactToAdminMail(request.Subject, null, request.Email,
                 new[] { request.Message }));
             _mailService.SendMail(new ContactToUser("Contact avec l'équipe d'adninistration", request.Email, null,
                 Array.Empty<string>()));
+            _logger.Log(LogLevel.Information , "Mail envoyé");
             return Ok(new SuccessViewModel("Mail envoyé"));
         }
     }

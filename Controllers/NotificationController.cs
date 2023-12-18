@@ -19,13 +19,14 @@ public class NotificationController : ControllerBase
     
     private readonly DatabaseContext _context;
     private readonly IUserService _userService;
+    private readonly Logger<NotificationController> _logger;
 
 
-
-    public NotificationController(DatabaseContext context, IUserService userService)
+    public NotificationController(DatabaseContext context, IUserService userService , Logger<NotificationController> logger)
     {
         _context = context;
         _userService = userService;
+        _logger = logger;
     }
     
     
@@ -36,8 +37,7 @@ public class NotificationController : ControllerBase
         string userId = _userService.GetUserIdFromToken()!;
         var user = await _context.Users.FindAsync(userId);
         var result = await _context.Notifications.Where(u => u.User == user).ToListAsync();
-        
-
+        _logger.LogInformation("User {userId} get notifications", userId);
         return Ok(result);
 
     }
@@ -46,10 +46,15 @@ public class NotificationController : ControllerBase
     public  async Task<ActionResult> DeleteNotification(int id )
     {
         var notification = await _context.Notifications.FindAsync(id);
+        if(notification == null)
+        {
+            _logger.LogInformation("Notification {notificationId} not found", id);
+            return NotFound("Notification not found");
+        }
         _context.Notifications.Remove(notification);
         await _context.SaveChangesAsync();
-
-        return Ok();
+        _logger.LogInformation("Notification {notificationId} deleted", id);
+        return Ok("Notification deleted");
 
     }
 }

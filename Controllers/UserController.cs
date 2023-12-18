@@ -30,6 +30,7 @@ namespace VacancyProAPI.Controllers
         private readonly IConfiguration _config;
         private readonly IMailService _mailService;
         private readonly IUserService _userService;
+        private readonly Logger<UserController> _logger;
 
         /// <summary>
         /// Constructeur du controller qui permet de gérer les utilisateurs
@@ -39,13 +40,14 @@ namespace VacancyProAPI.Controllers
         /// <param name="config">Objet contenant la configuration du système</param>
         /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         /// <param name="userService">Service permettant d'intéragir avec l'utilisateur connecté</param>
-        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config,IMailService mailService, IUserService userService)
+        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config,IMailService mailService, IUserService userService , Logger<UserController> logger)
         {
             _context = context;
             _userManager = userManager;
             _config = config;
             _mailService = mailService;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -55,7 +57,11 @@ namespace VacancyProAPI.Controllers
         public async Task<ActionResult<UserViewModel>> WhoAmI()
         {
             var id = _userService.GetUserIdFromToken();
-            if (id == null) return NotFound(new ErrorViewModel("Aucun utilisateur associé à ce token"));
+            if (id == null)
+            {
+                _logger.LogError("Aucun utilisateur associé à ce token");
+                return NotFound(new ErrorViewModel("Aucun utilisateur associé à ce token"));
+            }
 
             var user = await _userManager.FindByIdAsync(id);
             
@@ -77,9 +83,10 @@ namespace VacancyProAPI.Controllers
         {
             var users =  await _context.Users.Include(p => p.Periods).ToListAsync();
             var userViewModels = new List<UserViewModel>();
-            Period period = await _context.Periods.FindAsync(periodId);
+            Period? period = await _context.Periods.FindAsync(periodId);
             if (period == null)
             {
+                _logger.LogError("L'id de la période n'est pas correct");
                 return BadRequest("L'id de la période n'est pas correct");
             }
             foreach (var user in users)
@@ -90,7 +97,7 @@ namespace VacancyProAPI.Controllers
                     userViewModels.Add(new UserViewModel(user, isAdmin, "nothing to see here"));
                 }
             }
-
+            _logger.LogInformation("La liste des utilisateurs a bien été récupérée");
             return Ok(userViewModels);
         }
         [AllowAnonymous]
@@ -101,6 +108,7 @@ namespace VacancyProAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogError("Les données transmises sont invalides");
                 return BadRequest(new ErrorViewModel("Données invalides"));
             }
             Dictionary<string, int> result = new Dictionary<string, int>();
@@ -121,6 +129,7 @@ namespace VacancyProAPI.Controllers
                     result.Add(periodName, period.ListUser.Count);
                 }
             }
+            _logger.LogInformation("La liste des utilisateurs en vacances a bien été récupérée");
             return Ok(result);
         }
 

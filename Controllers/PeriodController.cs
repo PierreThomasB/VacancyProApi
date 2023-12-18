@@ -25,11 +25,13 @@ public class PeriodController : ControllerBase
     private readonly PlaceController _placeController;
     private readonly IUserService _userService;
     private readonly UserManager<User> _userManager;
+    private readonly Logger<PeriodController> _logger;
 
 
 
-    public PeriodController(DatabaseContext context , IUserService userService , UserManager<User> userManager )
+    public PeriodController(DatabaseContext context , IUserService userService , UserManager<User> userManager , Logger<PeriodController> logger )
     {
+        _logger = logger;
         _context = context;
         _placeController = new PlaceController(context);
         _userService =  userService;
@@ -90,6 +92,7 @@ public class PeriodController : ControllerBase
 
         if (!ModelState.IsValid)
         {
+            _logger.LogError("La période n'est pas valide ");
             return BadRequest("La période n'est pas valide ");
         }
 
@@ -112,6 +115,7 @@ public class PeriodController : ControllerBase
         await _context.SaveChangesAsync();
 
 
+        _logger.LogInformation("La période a bien été créée");
         return CreatedAtAction("GetVacances", new { id = p.Id }, vacancesObj);
 
     }
@@ -129,16 +133,19 @@ public class PeriodController : ControllerBase
        
         if (await this._context.Periods.FindAsync(id) == null)
         {
+            _logger.LogError("L'id des vacances n'a pas été trouvé");
             return NotFound("L'id des vacances n'a pas été trouvé");
         }
        
         Period vacances = (await _context.Periods.FindAsync(id))!;
         if (!user.Periods.Contains(vacances))
         {
+            _logger.LogError("Vous n'avez pas l'autorisation de supprimer cette periode de vacances");
             return Unauthorized("Vous n'avez pas l'autorisation de supprimer cette periode de vacances");
         }
         _context.Periods.Remove(vacances);
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Les vacances ont bien été supprimé");
         return Ok("Les vacances ont bien été supprimé ");
     }
     
@@ -151,17 +158,19 @@ public class PeriodController : ControllerBase
 
     public async Task<IActionResult> AddUser(string userId, int period)
     {
-        Period result = (await _context.Periods.FindAsync(period))!;
-        User user = (await _context.Users.FindAsync(userId))!;
+        Period? result = (await _context.Periods.FindAsync(period));
+        User? user = (await _context.Users.FindAsync(userId));
         
         if (result == null || user == null)
         {
+            _logger.LogError("L'id de l'utilisateur ou des vacances n'a pas été trouvé");
             return BadRequest("L'id de l'utilisateur ou des vacances n'a pas été trouvé");
         }
            
         result.ListUser.Add(user);
         AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances ");
         await _context.SaveChangesAsync();
+        _logger.LogInformation("La personne à bien été ajoutée");
         return Ok("La personne à bien été ajoutée");
     }
 

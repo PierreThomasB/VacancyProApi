@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models.ViewModels;
+using System.Text.Json;
+
 
 namespace VacancyProAPI.Controllers;
 
@@ -14,8 +15,13 @@ namespace VacancyProAPI.Controllers;
 
 public class MeteoController : ControllerBase
 {
+    private readonly Logger<MeteoController> _logger;
 
-    
+    public MeteoController(Logger<MeteoController> logger)
+    {
+        _logger = logger;
+    }
+
     private const string MeteoUrl =
         "http://api.weatherstack.com/current?access_key=e673e42fd6f4e270fd86ae218fbc7d07&query=";
     
@@ -34,13 +40,16 @@ public class MeteoController : ControllerBase
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     string apiResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-                    return Ok(apiResponse);
+                    MeteoViewModel deserializedResponse = JsonSerializer.Deserialize<MeteoViewModel>(apiResponse)!;
+                    _logger.LogInformation("Météo récupérée");
+                    return Ok(deserializedResponse);
                 }
-
+                _logger.LogError("Météo non trouvée");
                 return NotFound("La vile n'a pas été trouvée" + httpResponseMessage.StatusCode);
             }
             catch (HttpRequestException e)
             {
+                _logger.LogError("Erreur dans la requête");
                 return BadRequest("Erreur dans la requête");
             }
         }
