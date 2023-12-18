@@ -29,6 +29,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+obj/
 [Ll]og/
 [Ll]ogs/
 
@@ -304,6 +305,10 @@ node_modules/
 # Visual Studio 6 technical files
 *.ncb
 *.aps
+/obj
+/.vs
+/bin
+/.idea
 
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
@@ -396,11 +401,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
-/obj/*
-obj/*
-*.bin
-*.dll
-*.exe
-*.xaml.cs
-*.vscode
