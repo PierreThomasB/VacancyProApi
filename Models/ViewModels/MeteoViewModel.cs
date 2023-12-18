@@ -19,13 +19,11 @@ public class Current
     public int WindSpeed { get; set; }
     public int Presure { get; set; }
 
-    public Current(int temperature, string[] weatherIcons, string[] weatherDescriptions, int windSpeed, int presure)
+    public Current(int temperature, string[] weatherIcons, string[] weatherDescriptions)
     {
         Temperature = temperature;
         WeatherIcons = weatherIcons;
         WeatherDescriptions = weatherDescriptions;
-        WindSpeed = windSpeed;
-        Presure = presure;
     }
 }
 

@@ -19,10 +19,10 @@ public class NotificationController : ControllerBase
     
     private readonly DatabaseContext _context;
     private readonly IUserService _userService;
-    private readonly Logger<NotificationController> _logger;
+    private readonly ILogger<NotificationController> _logger;
 
 
-    public NotificationController(DatabaseContext context, IUserService userService , Logger<NotificationController> logger)
+    public NotificationController(DatabaseContext context, IUserService userService , ILogger<NotificationController> logger)
     {
         _context = context;
         _userService = userService;

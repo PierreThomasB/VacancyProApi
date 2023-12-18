@@ -15,9 +15,9 @@ namespace VacancyProAPI.Controllers;
 
 public class MeteoController : ControllerBase
 {
-    private readonly Logger<MeteoController> _logger;
+    private readonly ILogger <MeteoController> _logger;
 
-    public MeteoController(Logger<MeteoController> logger)
+    public MeteoController(ILogger<MeteoController> logger)
     {
         _logger = logger;
     }
@@ -40,9 +40,8 @@ public class MeteoController : ControllerBase
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     string apiResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-                    MeteoViewModel deserializedResponse = JsonSerializer.Deserialize<MeteoViewModel>(apiResponse)!;
                     _logger.LogInformation("Météo récupérée");
-                    return Ok(deserializedResponse);
+                    return Ok(apiResponse);
                 }
                 _logger.LogError("Météo non trouvée");
                 return NotFound("La vile n'a pas été trouvée" + httpResponseMessage.StatusCode);

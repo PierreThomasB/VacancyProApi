@@ -20,7 +20,7 @@ namespace VacancyProAPI.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private readonly Logger<ContactController> _logger;
+        private readonly ILogger<ContactController> _logger;
         private readonly IMailService _mailService;
         
         /// <summary>
@@ -30,7 +30,7 @@ namespace VacancyProAPI.Controllers
         /// <param name="userManager">Service permettant de gérer l'utilisateur connecté</param>
         /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         
-        public ContactController( IMailService mailService , Logger<ContactController> logger)
+        public ContactController( IMailService mailService , ILogger<ContactController> logger)
         {
             _logger = logger;
             _mailService = mailService;
