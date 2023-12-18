@@ -14,7 +14,7 @@ public class Chat
     
     [Required] public DateTime Date { get; set; }
     
-    [Required] public User? User { get; set; } 
+    [Required] public string UserName { get; set; } 
 
 
     public Chat()

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PusherServer;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
@@ -24,6 +25,7 @@ public class ChatController : ControllerBase
 
 
 
+    private readonly ILogger<ChatController> _logger;
     private readonly Pusher _pusher;
     private readonly DatabaseContext _context;
     private readonly IUserService _userService;
@@ -31,10 +33,11 @@ public class ChatController : ControllerBase
 
  
     public ChatController(DatabaseContext context, ILogger<ChatController> logger, UserManager<User> userManager,
-        IUserService userService)
+        IUserService userService , ILogger<ChatController> _logger)
     {
-        this._context = context;
+         _context = context;
         _userService = userService;
+        _logger = _logger;
 
         var options = new PusherOptions
         {
@@ -42,7 +45,7 @@ public class ChatController : ControllerBase
             Encrypted = true
         };
 
-        this._pusher = new Pusher(
+       _pusher = new Pusher(
             "1708130",
             "74f1716b51dbbc6c19ca",
             "c3341eb1f00700d5711a",
@@ -61,15 +64,16 @@ public class ChatController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
+            _logger.Log(LogLevel.Warning, "Le format du message n'est pas correst ");
             return BadRequest(new ErrorViewModel("Le format du message n'est pas correst "));
         }
         Check100Message();
         string userId = _userService.GetUserIdFromToken()!;
         var user = await _context.Users.FindAsync(userId);
-        chat.User = user;
          _context.Messages.Add(chat);
         await _context.SaveChangesAsync();
-        await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , User = user});
+        await _pusher.TriggerAsync(chat.Channel, "my-event", new {Id = chat.Id, Date = chat.Date ,Message =  chat.Message , Channel = chat.Channel  , UserName = user.UserName});
+        _logger.Log(LogLevel.Information, "Le message a été envoyé ");
         return CreatedAtAction("GetMessage", new { id = chat.Id }, chat);
 
     }
@@ -77,14 +81,17 @@ public class ChatController : ControllerBase
 
     private async void Check100Message()
     {
+        
         var messages =  _context.Messages.OrderByDescending(m => m.Date);
         int count = _context.Messages.Count();
         if (count > 100)
         {
+            int nbr = 0;
             foreach (var message in messages)
             {
                 _context.Messages.Remove(message);
                 count--;
+                nbr++;
                 if (count < 100)
                 {
                     break;
@@ -92,6 +99,7 @@ public class ChatController : ControllerBase
             }
         }
         await  _context.SaveChangesAsync();
+        _logger.Log(LogLevel.Information , "Il y a eu une suppression de  "+ count + " messages" );
     }
 
 
@@ -104,11 +112,14 @@ public class ChatController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
+            _logger.Log(LogLevel.Warning, "L'id n'est pas correct ");
             return BadRequest("L'id n'est pas correct");
+            
         }
         var values = await _context.Messages.FindAsync(id);
         if (values == null)
         {
+            _logger.Log(LogLevel.Warning, "Le message n'a pas été trouvé ");
             return NotFound("Le message n'a pas été trouvé ");
         }
         return Ok(values);
@@ -122,14 +133,16 @@ public class ChatController : ControllerBase
     {
         if (channel.Length == 0 )
         {
+            _logger.Log(LogLevel.Warning, "La valeur pour le channel n'est pas correcte ");
             return BadRequest("La valeur pour le channel n'est pas correcte ");
         }
-        var values =  _context.Messages.Include(m => m.User).Where(a => a.Channel == channel).OrderBy(m => m.Date);
-
+        var values =  _context.Messages.Where(a => a.Channel == channel).OrderBy(m => m.Date);
+        if (values.IsNullOrEmpty())
+        {
+            _logger.Log(LogLevel.Warning, "Le channel n'a pas été trouvé ");
+            return NotFound("Le channel n'a pas été trouvé ");
+        }
+        _logger.Log(LogLevel.Information, "Les messages ont été récupérés ");
         return Ok(values);
-
     }
-
-
-
 }

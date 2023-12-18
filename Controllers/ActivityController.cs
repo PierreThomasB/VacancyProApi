@@ -18,11 +18,13 @@ public class ActivityController : ControllerBase
 {
     private readonly DatabaseContext _context;
     private readonly PlaceController _placeController;
+    private readonly ILogger<ActivityController> _logger;
 
-    public ActivityController(DatabaseContext context)
+    public ActivityController(DatabaseContext context , ILogger<ActivityController> logger)
     {
         _context = context;
         _placeController = new PlaceController(context);
+        logger = _logger;
     }
     
     
@@ -36,7 +38,11 @@ public class ActivityController : ControllerBase
 
     public async Task<IActionResult> Post([FromBody] Activity activity)
     {
-        if (!ModelState.IsValid) return BadRequest(new ErrorViewModel("Informations invalide"));
+        if (!ModelState.IsValid)
+        {
+            _logger.Log(LogLevel.Warning , "Erreur dans l'ajout d'une activitée ");
+            return BadRequest(new ErrorViewModel("Informations invalide"));
+        }
         string formatedDateBegin = activity.BeginDate.ToString("yyyy-MM-dd HH:mm:ss");
         string formatedDateEnd = activity.EndDate.ToString("yyyy-MM-dd HH:mm:ss");
         Place place  = await _placeController.AddPlace(activity.Place);
@@ -47,6 +53,7 @@ public class ActivityController : ControllerBase
                         "'," + activity.Period.Id + ")";
         
          _context.Database.ExecuteSqlRaw(sqlRaw);
+         _logger.Log(LogLevel.Information , "Activitée ajouté avec succès");
         await _context.SaveChangesAsync();
         
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
@@ -62,14 +69,17 @@ public class ActivityController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
+            _logger.Log(LogLevel.Warning , "Erreur dans la récupération de donnée pour une activitée ");
             return BadRequest("Aucune valeur passée pour l'id ");
         }
         var period = await _context.Periods.FindAsync(id);
         if (period == null)
         {
+            _logger.Log(LogLevel.Warning , "Erreur dans la récupération de donnée pour une activitée ");
             return NotFound("La période correspondant à l'id n'a pas été trouvé ");
         }
         var result =  _context.Activities.Include(p => p.Place).Include(pl => pl.Period).Where(a => a.Period == period);
+        _logger.Log(LogLevel.Information , "Récupération de données éffectué ");
         return Ok(result);
     }
     
@@ -82,6 +92,7 @@ public class ActivityController : ControllerBase
         var result = await this._context.Activities.FindAsync(id);
         if (result == null)
         {
+            _logger.Log(LogLevel.Warning , "Erreur dans la récupération de donnée pour une activitée ");
             return NotFound("L'id n'a pas été trouvé");
         }
 
