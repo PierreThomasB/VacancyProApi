@@ -30,7 +30,7 @@ namespace VacancyProAPI.Controllers
         private readonly IConfiguration _config;
         private readonly IMailService _mailService;
         private readonly IUserService _userService;
-        private readonly Logger<UserController> _logger;
+        private readonly ILogger<UserController> _logger;
 
         /// <summary>
         /// Constructeur du controller qui permet de gérer les utilisateurs
@@ -40,7 +40,8 @@ namespace VacancyProAPI.Controllers
         /// <param name="config">Objet contenant la configuration du système</param>
         /// <param name="mailService">Service qui permet d'envoyer des mails</param>
         /// <param name="userService">Service permettant d'intéragir avec l'utilisateur connecté</param>
-        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config,IMailService mailService, IUserService userService , Logger<UserController> logger)
+        /// <param name="logger"></param>
+        public UserController(DatabaseContext context, UserManager<User> userManager, IConfiguration config,IMailService mailService, IUserService userService , ILogger<UserController> logger)
         {
             _context = context;
             _userManager = userManager;
@@ -66,6 +67,7 @@ namespace VacancyProAPI.Controllers
             var user = await _userManager.FindByIdAsync(id);
             
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            _logger.LogInformation("Les informations de l'utilisateur ont bien été récupérées");
             
             return Ok(new UserViewModel(user, isAdmin, Token.CreateToken(user, _userManager, _config)));
         }

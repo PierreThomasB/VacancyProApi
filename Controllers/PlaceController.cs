@@ -64,7 +64,11 @@ public class PlaceController
                 {
                     string photoUrl = await httpResponseMessage.Content.ReadAsStringAsync();
                     JObject json = JObject.Parse(photoUrl);
-                    return (string)json["result"]!["photos"]![0]!["photo_reference"]!;
+                    if ((string)json["result"]["photos"][0]["photo_reference"] == null)
+                    {
+                        return "NOT FOUND";
+                    }
+                    return (string)json["result"]!["photos"]![0]!["photo_reference"];
                 }
 
                 return "Non trouvé ";

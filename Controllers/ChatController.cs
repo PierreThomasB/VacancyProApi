@@ -33,11 +33,11 @@ public class ChatController : ControllerBase
 
  
     public ChatController(DatabaseContext context, ILogger<ChatController> logger, UserManager<User> userManager,
-        IUserService userService , ILogger<ChatController> _logger)
+        IUserService userService )
     {
          _context = context;
         _userService = userService;
-        _logger = _logger;
+        _logger = logger;
 
         var options = new PusherOptions
         {

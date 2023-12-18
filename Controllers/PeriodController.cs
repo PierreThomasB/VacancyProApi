@@ -25,11 +25,11 @@ public class PeriodController : ControllerBase
     private readonly PlaceController _placeController;
     private readonly IUserService _userService;
     private readonly UserManager<User> _userManager;
-    private readonly Logger<PeriodController> _logger;
+    private readonly ILogger<PeriodController> _logger;
 
 
 
-    public PeriodController(DatabaseContext context , IUserService userService , UserManager<User> userManager , Logger<PeriodController> logger )
+    public PeriodController(DatabaseContext context , IUserService userService , UserManager<User> userManager , ILogger<PeriodController> logger )
     {
         _logger = logger;
         _context = context;
