@@ -168,7 +168,7 @@ public class PeriodController : ControllerBase
         }
            
         result.ListUser.Add(user);
-        AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances ");
+        AddNotif(user, "Vous avez été ajouté à une nouvelle périodes de vacances "+result.Name);
         await _context.SaveChangesAsync();
         _logger.LogInformation("La personne à bien été ajoutée");
         return Ok("La personne à bien été ajoutée");

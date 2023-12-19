@@ -11,7 +11,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using VacancyProAPI;
 using VacancyProAPI.Models;
-using VacancyProAPI.Services.ChatService;
 using VacancyProAPI.Models.DbModels;
 using VacancyProAPI.Services.MailService;
 using VacancyProAPI.Services.UserService;
@@ -100,6 +99,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chatsocket");
 
 app.Run();

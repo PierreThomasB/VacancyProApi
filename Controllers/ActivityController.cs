@@ -50,7 +50,9 @@ public class ActivityController : ControllerBase
         }
         string formatedDateBegin = activity.BeginDate.ToString("yyyy-MM-dd HH:mm:ss");
         string formatedDateEnd = activity.EndDate.ToString("yyyy-MM-dd HH:mm:ss");
+        
         Place place  = await _placeController.AddPlace(activity.Place);
+        
         string sqlRaw = "INSERT INTO Activities (Name , Description ,BeginDate,EndDate,PlaceId,PeriodId) VALUES ('" +
                         activity.Name +
                         "','" + activity.Description + "','" + formatedDateBegin + "','" + formatedDateEnd + "','" +
@@ -59,7 +61,7 @@ public class ActivityController : ControllerBase
         
          _context.Database.ExecuteSqlRaw(sqlRaw);
          _logger.Log(LogLevel.Information , "Activitée ajouté avec succès");
-        await _context.SaveChangesAsync();
+         await _context.SaveChangesAsync();
         
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
@@ -133,5 +135,15 @@ public class ActivityController : ControllerBase
         }
         _logger.Log(LogLevel.Warning , "Erreur dans la suppression d'une activitée ");
         return BadRequest("Vous n'avez pas les droits pour supprimer cette activitée");
+    }
+    
+    private void AddNotif(User user, string contenu)
+    {
+        Notification notification = new Notification();
+        notification.User = user;
+        notification.Contenu = contenu;
+        notification.Date = DateTime.Now;
+        _context.Notifications.Add(notification);
+
     }
 }
