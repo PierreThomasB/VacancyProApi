@@ -65,6 +65,34 @@ public class ActivityController : ControllerBase
         
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
+    
+    [HttpPut("UpdateActivity")]
+    [Produces("application/json")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
+    [SwaggerOperation(Summary = "Met à jour une activitée avec les dates concernées ")]
+    public async Task<IActionResult> UpdateActivity([FromBody] Activity activity)
+    {
+        if (!ModelState.IsValid)
+        {
+            _logger.Log(LogLevel.Warning, "Erreur dans la mise à jour d'une activitée ");
+            return BadRequest(new ErrorViewModel("Informations invalide"));
+        }
+
+        var activityInBd = await _context.Activities.FindAsync(activity.Id);
+        if (activityInBd == null)
+        {
+            _logger.Log(LogLevel.Warning, "Erreur dans la mise à jour d'une activitée ");
+            return NotFound("L'id de l'activité n'a pas été trouvé");
+        }
+        activityInBd.BeginDate = activity.BeginDate;
+        activityInBd.EndDate = activity.EndDate;
+         _context.Activities.Update(activityInBd);
+         await _context.SaveChangesAsync();
+        return Ok(activityInBd);
+    }
+    
+    
+    
 
     
     [HttpGet("ActivityByPeriod")]
