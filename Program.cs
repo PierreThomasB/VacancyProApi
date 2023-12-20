@@ -100,4 +100,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-app.Run();
+app.MapGet("/", () => "Hello World!");
+app.Run("https://porthos-intra.cg.helmo.be/e190476:5000");
