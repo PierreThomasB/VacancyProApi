@@ -31,7 +31,6 @@ builder.Services.AddCors(p => p.AddPolicy("VacancyPro", builder =>
     builder.WithOrigins("http://localhost:3000", "https://panoramix.cg.helmo.be").WithMethods("GET", "PUT", "DELETE", "POST").AllowAnyHeader().AllowCredentials();
 }));
 var connectionString = configuration.GetConnectionString("default");
-builder.WebHost.UseUrls("https://porthos-intra.cg.helmo.be/e190476:5000"); 
 
 
 
@@ -99,6 +98,3 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
-app.MapGet("/", () => "Hello World!");
-app.Run("https://porthos-intra.cg.helmo.be/e190476:5000");
