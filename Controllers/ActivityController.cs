@@ -66,7 +66,7 @@ public class ActivityController : ControllerBase
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
     
-    [HttpPut("UpdateActivity")]
+    [HttpPut("DateActivity")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     [SwaggerOperation(Summary = "Met à jour une activitée avec les dates concernées ")]
