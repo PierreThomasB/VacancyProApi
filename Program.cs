@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
-builder.WebHost.UseUrls("https://porthos-intra.cg.helmo.be/e190476/:5000"); 
+builder.WebHost.UseUrls("https://porthos-intra.cg.helmo.be/e190476:5000"); 
 
 var app = builder.Build();
 
