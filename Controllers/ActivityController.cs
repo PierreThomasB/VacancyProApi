@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using VacancyProAPI.Models;
 using VacancyProAPI.Models.DbModels;
+using VacancyProAPI.Models.DTOs;
 using VacancyProAPI.Models.ViewModels;
 using VacancyProAPI.Services.UserService;
 
@@ -66,29 +68,35 @@ public class ActivityController : ControllerBase
         return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
     }
     
-    [HttpPut("DateActivity")]
+    [HttpPut("{id:int}")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     [SwaggerOperation(Summary = "Met à jour une activitée avec les dates concernées ")]
-    public async Task<IActionResult> UpdateActivity([FromBody] Activity activity)
+    public async Task<IActionResult> UpdateActivity(int id ,  EditActivityDto activity)
     {
         if (!ModelState.IsValid)
         {
             _logger.Log(LogLevel.Warning, "Erreur dans la mise à jour d'une activitée ");
             return BadRequest(new ErrorViewModel("Informations invalide"));
         }
-
-        var activityInBd = await _context.Activities.FindAsync(activity.Id);
-        if (activityInBd == null)
+        try
         {
-            _logger.Log(LogLevel.Warning, "Erreur dans la mise à jour d'une activitée ");
-            return NotFound("L'id de l'activité n'a pas été trouvé");
+            var activityInBd = await _context.Activities.FindAsync(id);
+            if (activityInBd == null){
+                return NotFound($"Employee with Id = {id} not found");
+            }
+            activityInBd.BeginDate = activity.BeginDate;
+            activityInBd.EndDate = activity.EndDate;
+            activityInBd.Name = activity.Name;
+            activityInBd.Description = activity.Description;
+             _context.Activities.Update(activityInBd);
+             await _context.SaveChangesAsync();
+             return Ok(activityInBd);
+        }catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error updating data");
         }
-        activityInBd.BeginDate = activity.BeginDate;
-        activityInBd.EndDate = activity.EndDate;
-         _context.Activities.Update(activityInBd);
-         await _context.SaveChangesAsync();
-        return Ok(activityInBd);
     }
     
     
