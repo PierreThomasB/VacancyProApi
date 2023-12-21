@@ -121,7 +121,7 @@ public class PeriodController : ControllerBase
     }
 
    
-    [HttpDelete("Delete")]
+    [HttpDelete("{id}")]
     [Produces("application/json")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     [SwaggerOperation(Summary = "Permet de supprimer une période  ")]
@@ -150,7 +150,7 @@ public class PeriodController : ControllerBase
     }
     
     
-    [HttpPut("AddUser")]
+    [HttpPut("NewUser")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "L'utilisateur n'est pas connecté ou son token est invalide")]
     [Produces("application/json")]
     [SwaggerOperation(Summary = "Permet d'ajouter un utilisateur à une période ")]

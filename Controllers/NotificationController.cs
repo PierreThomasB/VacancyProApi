@@ -42,7 +42,7 @@ public class NotificationController : ControllerBase
 
     }
     
-    [HttpDelete("Notification")]
+    [HttpDelete("{id}")]
     public  async Task<ActionResult> DeleteNotification(int id )
     {
         var notification = await _context.Notifications.FindAsync(id);
