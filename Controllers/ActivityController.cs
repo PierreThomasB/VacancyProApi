@@ -81,7 +81,7 @@ public class ActivityController : ControllerBase
         }
         try
         {
-            var activityInBd = await _context.Activities.FindAsync(id);
+            var activityInBd =  await _context.Activities.Include(a => a.Period).ThenInclude(u => u.ListUser).FirstAsync(a => a.Id == id);
             if (activityInBd == null){
                 return NotFound($"Employee with Id = {id} not found");
             }
@@ -91,6 +91,11 @@ public class ActivityController : ControllerBase
             activityInBd.Description = activity.Description;
              _context.Activities.Update(activityInBd);
              await _context.SaveChangesAsync();
+             var period = activityInBd.Period;
+             foreach(var user in period.ListUser)
+             {
+                 AddNotif(user:user ,"L'activitée " + activityInBd.Name + " de la période "+" a été modifié avec succès");
+             }
              return Ok(activityInBd);
         }catch (Exception)
         {
